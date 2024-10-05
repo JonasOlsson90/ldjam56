@@ -1,4 +1,7 @@
-    class MainScene extends Phaser.Scene {
+let booted = true;
+let splash;
+    
+class MainScene extends Phaser.Scene {
     constructor() {
         super({ key: 'MainScene' });
     }
@@ -7,6 +10,7 @@
         // Load your assets here (e.g., player and box images)
         this.load.image('player', 'assets/box.png'); // Replace with actual path
         this.load.image('box', 'assets/button.png'); // Replace with actual path
+        this.load.image('splash', 'assets/splash.png');
     }
 
     create() {
@@ -27,14 +31,30 @@
     }
 
     update() {
-        if (!this.scene.isPaused('MiniGameA') && !this.scene.isPaused('MiniGameB')) {
+        //if (!this.scene.isPaused('MiniGameA') && !this.scene.isPaused('MiniGameB')) {
             this.checkPlayerCollision();
             this.handleMovement();
+            
+        // booted = false;
+        if (booted) {
+            booted = false;
+            splash = this.physics.add.sprite(0, 0, 'splash');
+            splash.setOrigin(0, 0);
+            splash.body.setAllowGravity(false);
+            game.pause();
+
         }
+        //}
     }
 
-    handleMovement() {        
-        if(isPlayingMinigame){
+    handleMovement() {    
+        console.log("din mamma uppdateras!")    
+        // console.log("player vel x: " + this.player.VelocityX);
+        // console.log("player vel y: " + this.player);
+        const isMoving = this.cursors.left.isDown || this.cursors.right.isDown || this.cursors.up.isDown || this.cursors.down.isDown;
+
+        //console.log(isMoving)
+        if(isPlayingMinigame || !isMoving){
             this.player.setVelocity(0);
         }
 
@@ -65,7 +85,7 @@
         const collidingWithRightBox = Phaser.Geom.Intersects.RectangleToRectangle(playerBounds, rightBoxBounds);
     
         if (!collidingWithLeftBox && !collidingWithRightBox) {
-            console.log("The player is NOT colliding with any boxes.");
+            
             isMinigamePlayable = true;
             if(justPlayedMinigame) {
                 justPlayedMinigame = false 
@@ -74,17 +94,16 @@
     }
 
     triggerMiniGame(miniGame) {
-        console.log("triggerMiniGame triggered")
-        console.log(isMinigamePlayable);
+        
+        // console.log("isMinigamePlayable: " + isMinigamePlayable);
         if (isMinigamePlayable == true){
             isMinigamePlayable = false;
-            console.log(isMinigamePlayable)
+            // console.log("isMinigamePlayable: " + isMinigamePlayable)
             if (!this.scene.isPaused(miniGame)) {
                 this.scene.pause();
                 this.scene.launch(miniGame);
             }
             this.scene.resume();
-            console.log("here")
         }
     }
 }
@@ -103,6 +122,7 @@ class MiniGameA extends Phaser.Scene {
 
         this.input.keyboard.on('keydown-A', this.incrementCounter, this);
         this.time.delayedCall(3000, this.endMiniGame, [], this);
+        isPlayingMinigame=true;
     }
 
     incrementCounter() {
@@ -116,8 +136,8 @@ class MiniGameA extends Phaser.Scene {
 
         const scoreMessage = `MiniGame A ended! You pressed 'A' ${this.counter} times.`;
         console.log(scoreMessage);
-	    justPlayedMinigame=true
-        alert(scoreMessage); // Replace with better UI if desired
+	    justPlayedMinigame=true;
+        isPlayingMinigame = false;
     }
 }
 
@@ -135,7 +155,7 @@ class MiniGameB extends Phaser.Scene {
 
         this.input.keyboard.on('keydown-B', this.incrementCounter, this);
         this.time.delayedCall(3000, this.endMiniGame, [], this);
-	    isPlayingMinigame=true
+	    isPlayingMinigame=true;
     }
 
     incrementCounter() {
@@ -149,11 +169,17 @@ class MiniGameB extends Phaser.Scene {
 
         const scoreMessage = `MiniGame B ended! You pressed 'B' ${this.counter} times.`;
         console.log(scoreMessage);
-        justPlayedMinigame = true
-        isPlayingMinigame = false
-        alert(scoreMessage); // Replace with better UI if desired
+        justPlayedMinigame = true;
+        isPlayingMinigame = false;
     }
 }
+
+window.addEventListener('keydown', function(event) {
+    if (event.code === 'Space' && game.isPaused) {
+        splash.destroy();
+        game.resume();
+    }
+});
 
 const config = {
     type: Phaser.AUTO,
