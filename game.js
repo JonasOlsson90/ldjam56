@@ -1,6 +1,7 @@
 let booted = true;
 let splash;
 let framerate = 6;
+let setAnimFlag = false;
     
 class MainScene extends Phaser.Scene {
     constructor() {
@@ -14,6 +15,8 @@ class MainScene extends Phaser.Scene {
         this.load.image('splash', 'assets/splash.png');
 	this.load.image('laoban_stand1', 'assets/laoban_stand1.png');
 	this.load.image('laoban_stand2', 'assets/laoban_stand2.png');
+	this.load.image('laoban_walk1', 'assets/laoban_walk1.png');
+	this.load.image('laoban_walk2', 'assets/laoban_walk2.png')
     }
 
     create() {
@@ -26,7 +29,13 @@ class MainScene extends Phaser.Scene {
 		repeat: -1
 	});
 
-	
+	this.anims.create({
+		key: 'laoban_walk',
+		frames: [{key: 'laoban_walk1'}, {key: 'laoban_walk2'}],
+		frameRate: framerate,
+		repeat: -1
+	})
+
 
         // Create player
         this.player = this.physics.add.sprite(400, 300, 'laoban_stand1').setCollideWorldBounds(true);
@@ -70,6 +79,20 @@ class MainScene extends Phaser.Scene {
         // console.log("player vel y: " + this.player);
         const isMoving = this.cursors.left.isDown || this.cursors.right.isDown || this.cursors.up.isDown || this.cursors.down.isDown;
 
+
+	// flip that guy like!
+	//if (this.cursors.right.isDow) {
+	//	this.player.scale.x = -1;
+	//}
+
+	//if(isMoving){
+	//	if(setAnimFlag)
+	//	this.player.anims.play('laoban_walk')
+	//} else if (!isMoving) {
+		
+	//	this.player.anims.play('laoban_stand')
+	//}
+
         //console.log(isMoving)
         if(isPlayingMinigame || !isMoving){
             this.player.setVelocity(0);
@@ -82,6 +105,7 @@ class MainScene extends Phaser.Scene {
             if (this.cursors.left.isDown) {
                 this.player.setVelocityX(-speed);
             } else if (this.cursors.right.isDown) {
+		this.player.scale.x = -1
                 this.player.setVelocityX(speed);
             }
 
