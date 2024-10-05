@@ -37,17 +37,19 @@
         const speed = 200;
         this.player.setVelocity(0);
 
-        if (this.cursors.left.isDown) {
-            this.player.setVelocityX(-speed);
-        } else if (this.cursors.right.isDown) {
-            this.player.setVelocityX(speed);
-        }
-
-        if (this.cursors.up.isDown) {
-            this.player.setVelocityY(-speed);
-        } else if (this.cursors.down.isDown) {
-            this.player.setVelocityY(speed);
-        }
+	if(!isPlayingMinigame){
+	        if (this.cursors.left.isDown) {
+	            this.player.setVelocityX(-speed);
+	        } else if (this.cursors.right.isDown) {
+	            this.player.setVelocityX(speed);
+	        }
+	
+        	if (this.cursors.up.isDown) {
+        	    this.player.setVelocityY(-speed);
+        	} else if (this.cursors.down.isDown) {
+        	    this.player.setVelocityY(speed);
+        	}	
+	}
     }
 
     checkPlayerCollision() {
@@ -68,6 +70,9 @@
             if (!collidingWithLeftBox && !collidingWithRightBox) {
                 console.log("The player is NOT colliding with any boxes.");
                 isMinigamePlayable = true;
+		if(justPlayedMinigame) {
+			justPlayedMinigame = false 
+		}
             }
         // }
     }
@@ -114,6 +119,7 @@ class MiniGameA extends Phaser.Scene {
 
         const scoreMessage = `MiniGame A ended! You pressed 'A' ${this.counter} times.`;
         console.log(scoreMessage);
+	justPlayedMinigame=true
         alert(scoreMessage); // Replace with better UI if desired
     }
 }
@@ -132,6 +138,7 @@ class MiniGameB extends Phaser.Scene {
 
         this.input.keyboard.on('keydown-B', this.incrementCounter, this);
         this.time.delayedCall(3000, this.endMiniGame, [], this);
+	isPlayingMinigame=true
     }
 
     incrementCounter() {
@@ -145,6 +152,8 @@ class MiniGameB extends Phaser.Scene {
 
         const scoreMessage = `MiniGame B ended! You pressed 'B' ${this.counter} times.`;
         console.log(scoreMessage);
+	justPlayedMinigame = true
+	isPlayingMinigame = false
         alert(scoreMessage); // Replace with better UI if desired
     }
 }
@@ -164,5 +173,6 @@ const config = {
 };
 
 isMinigamePlayable = true;
-
+justPlayedMinigame = false;
+isPlayingMinigame = false;
 const game = new Phaser.Game(config);
