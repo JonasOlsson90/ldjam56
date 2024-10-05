@@ -21,10 +21,12 @@ class MainScene extends Phaser.Scene {
         this.boxes = this.physics.add.staticGroup();
         const leftBox = this.boxes.create(200, 300, 'box');
         const rightBox = this.boxes.create(600, 300, 'box');
+        const bottomBox = this.boxes.create(400, 500, 'box');
 
         // Set up overlap detection
         this.physics.add.overlap(this.player, leftBox, () => this.triggerMiniGame('MiniGameA'), null, this);
         this.physics.add.overlap(this.player, rightBox, () => this.triggerMiniGame('MiniGameB'), null, this);
+        this.physics.add.overlap(this.player, bottomBox, () => this.triggerMiniGame('MiniGameC'), null, this);
 
         // Input setup
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -78,14 +80,17 @@ class MainScene extends Phaser.Scene {
 
     checkPlayerCollision() {
         const playerBounds = this.player.getBounds();
-        const leftBoxBounds = this.boxes.getChildren()[0].getBounds(); // Assuming the first box is the left box
-        const rightBoxBounds = this.boxes.getChildren()[1].getBounds(); // Assuming the second box is the right box
+        const leftBoxBounds = this.boxes.getChildren()[0].getBounds();
+        const rightBoxBounds = this.boxes.getChildren()[1].getBounds();
+        const bottomBoxBounds = this.boxes.getChildren()[2].getBounds();
     
         const collidingWithLeftBox = Phaser.Geom.Intersects.RectangleToRectangle(playerBounds, leftBoxBounds);
         const collidingWithRightBox = Phaser.Geom.Intersects.RectangleToRectangle(playerBounds, rightBoxBounds);
+        const collidingWithBottomBox = Phaser.Geom.Intersects.RectangleToRectangle(playerBounds, bottomBoxBounds);
+
+        const isAnythingCollidingWithAnything = collidingWithLeftBox || collidingWithRightBox || collidingWithBottomBox;
     
-        if (!collidingWithLeftBox && !collidingWithRightBox) {
-            
+        if (isAnythingCollidingWithAnything) {
             isMinigamePlayable = true;
             if(justPlayedMinigame) {
                 justPlayedMinigame = false 
@@ -174,8 +179,41 @@ class MiniGameB extends Phaser.Scene {
     }
 }
 
+class MiniGameC extends Phaser.Scene {
+    constructor() {
+        super({ key: 'MiniGameC' });
+    }
+
+    create() {
+        this.counter = 0;
+        this.timerText = this.add.text(400, 300, 'MiniGame C: Press C', {
+            fontSize: '32px',
+            fill: '#fff',
+        }).setOrigin(0.5);
+
+        this.input.keyboard.on('keydown-C', this.incrementCounter, this);
+        this.time.delayedCall(3000, this.endMiniGame, [], this);
+	    isPlayingMinigame=true;
+    }
+
+    incrementCounter() {
+        this.counter++;
+    }
+
+    endMiniGame() {
+        this.input.keyboard.off('keydown-C', this.incrementCounter, this);
+        this.scene.stop();
+        this.scene.resume('MainScene');
+
+        const scoreMessage = `MiniGame C ended! You pressed 'B' ${this.counter} times.`;
+        console.log(scoreMessage);
+        justPlayedMinigame = true;
+        isPlayingMinigame = false;
+    }
+}
+
 window.addEventListener('keydown', function(event) {
-    if (event.code === 'Space' && game.isPaused) {
+    if (event.code === 'Enter' && game.isPaused) {
         splash.destroy();
         game.resume();
     }
@@ -192,7 +230,7 @@ const config = {
             debug: false,
         },
     },
-    scene: [MainScene, MiniGameA, MiniGameB],
+    scene: [MainScene, MiniGameA, MiniGameB, MiniGameC],
 };
 
 isMinigamePlayable = true;
