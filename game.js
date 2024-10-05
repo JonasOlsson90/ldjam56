@@ -74,20 +74,24 @@ class MainScene extends Phaser.Scene {
     }
 
     handleMovement() {    
-        console.log("din mamma uppdateras!")    
+        // console.log("din mamma uppdateras!")    
         // console.log("player vel x: " + this.player.VelocityX);
         // console.log("player vel y: " + this.player);
         const isMoving = this.cursors.left.isDown || this.cursors.right.isDown || this.cursors.up.isDown || this.cursors.down.isDown;
 
 
-	// flip that guy like!
-	//if (this.cursors.right.isDow) {
-	//	this.player.scale.x = -1;
-	//}
-
+	// flip that bitch!
+	if (this.cursors.right.isDown) {
+		this.player.scaleX = -1;
+	} else if (this.cursors.left.isDown) {
+		this.player.scaleX = 1;
+	}
+	console.log(this.player.scaleX)
 	if(isMoving){
-		this.player.anims.play('laoban_walk')
-    }
+		this.player.anims.play('laoban_walk');
+ 	} else if (!isMoving) {
+		this.player.anims.play('laoban_stand');
+	}
 		
 
 
