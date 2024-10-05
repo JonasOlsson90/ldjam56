@@ -86,14 +86,14 @@ class MainScene extends Phaser.Scene {
 	} else if (this.cursors.left.isDown) {
 		this.player.scaleX = 1;
 	}
-	console.log(this.player.scaleX)
-	if(isMoving){
+
+	if(isMoving ){
+		// this shit needs to be done just once.
 		this.player.anims.play('laoban_walk');
  	} else if (!isMoving) {
+		// this also needs to be done just once.
 		this.player.anims.play('laoban_stand');
 	}
-		
-
 
         //console.log(isMoving)
         if(isPlayingMinigame || !isMoving){
