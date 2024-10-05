@@ -34,11 +34,17 @@
     }
 
     handleMovement() {
-        const speed = 200;
-        this.player.setVelocity(0);
+        
+	if(isPlayingMinigame){
+		this.player.setVelocity(0)
+	}
+
 
 	if(!isPlayingMinigame){
-	        if (this.cursors.left.isDown) {
+	        const speed = 200;
+		this.player.setVelocity(0);
+
+		if (this.cursors.left.isDown) {
 	            this.player.setVelocityX(-speed);
 	        } else if (this.cursors.right.isDown) {
 	            this.player.setVelocityX(speed);
