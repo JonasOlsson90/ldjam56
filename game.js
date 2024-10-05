@@ -142,7 +142,7 @@ class MainScene extends Phaser.Scene {
     triggerMiniGame(miniGame) {
         
         // console.log("isMinigamePlayable: " + isMinigamePlayable);
-        if (isMinigamePlayable == true){
+        if (isMinigamePlayable === true){
             isMinigamePlayable = false;
             // console.log("isMinigamePlayable: " + isMinigamePlayable)
             if (!this.scene.isPaused(miniGame)) {
@@ -153,6 +153,8 @@ class MainScene extends Phaser.Scene {
         }
     }
 }
+
+let isPressed = false;
 
 class MiniGameA extends Phaser.Scene {
     constructor() {
@@ -167,12 +169,20 @@ class MiniGameA extends Phaser.Scene {
         }).setOrigin(0.5);
 
         this.input.keyboard.on('keydown-A', this.incrementCounter, this);
+        this.input.keyboard.on('keyup-A', this.onKeyUp, this);
         this.time.delayedCall(3000, this.endMiniGame, [], this);
         isPlayingMinigame=true;
     }
 
+    onKeyUp() {
+        isPressed = false;
+    }
+
     incrementCounter() {
-        this.counter++;
+        if (!isPressed) {
+            this.counter++;
+            isPressed = true;
+        }
     }
 
     endMiniGame() {
@@ -229,7 +239,11 @@ class MiniGameBalanceLaw extends Phaser.Scene {
     }
 
     create() {
-        this.counter = 1;
+        if (Math.floor(Math.random()) % 2 === 0){
+            this.counter = 1;
+        } else {
+            this.counter = -1;
+        }
         this.timerText = this.add.text(400, 300, 'MiniGame C: Press LEFT and RIGHT', {
             fontSize: '32px',
             fill: '#fff',
