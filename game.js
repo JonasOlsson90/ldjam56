@@ -5,8 +5,8 @@
 
     preload() {
         // Load your assets here (e.g., player and box images)
-        this.load.image('player', 'path/to/player.png'); // Replace with actual path
-        this.load.image('box', 'path/to/box.png'); // Replace with actual path
+        this.load.image('player', 'assets/box.png'); // Replace with actual path
+        this.load.image('box', 'assets/button.png'); // Replace with actual path
     }
 
     create() {
@@ -33,29 +33,27 @@
         }
     }
 
-    handleMovement() {
-        
-	if(isPlayingMinigame){
-		this.player.setVelocity(0)
-	}
+    handleMovement() {        
+        if(isPlayingMinigame){
+            this.player.setVelocity(0);
+        }
 
+        if(!isPlayingMinigame){
+            const speed = 200;
+            this.player.setVelocity(0);
 
-	if(!isPlayingMinigame){
-	        const speed = 200;
-		this.player.setVelocity(0);
+            if (this.cursors.left.isDown) {
+                this.player.setVelocityX(-speed);
+            } else if (this.cursors.right.isDown) {
+                this.player.setVelocityX(speed);
+            }
 
-		if (this.cursors.left.isDown) {
-	            this.player.setVelocityX(-speed);
-	        } else if (this.cursors.right.isDown) {
-	            this.player.setVelocityX(speed);
-	        }
-	
-        	if (this.cursors.up.isDown) {
-        	    this.player.setVelocityY(-speed);
-        	} else if (this.cursors.down.isDown) {
-        	    this.player.setVelocityY(speed);
-        	}	
-	}
+            if (this.cursors.up.isDown) {
+                this.player.setVelocityY(-speed);
+            } else if (this.cursors.down.isDown) {
+                this.player.setVelocityY(speed);
+            }
+        }
     }
 
     checkPlayerCollision() {
@@ -65,23 +63,16 @@
     
         const collidingWithLeftBox = Phaser.Geom.Intersects.RectangleToRectangle(playerBounds, leftBoxBounds);
         const collidingWithRightBox = Phaser.Geom.Intersects.RectangleToRectangle(playerBounds, rightBoxBounds);
-        // const isMainScenePaused = !this.scene.isPaused('MainScene');
-        // const isMMG1Paused = !this.scene.isPaused('MiniGameA');
-        // const isMG2Paused = !this.scene.isPaused('MiniGameB');
-        // console.log("isMainScenePaused: " + isMainScenePaused);
-        // console.log("MiniGameA: " + isMMG1Paused);
-        // console.log("MiniGameB: " + isMG2Paused);
     
-        // if (isMainScenePaused) {
-            if (!collidingWithLeftBox && !collidingWithRightBox) {
-                console.log("The player is NOT colliding with any boxes.");
-                isMinigamePlayable = true;
-		if(justPlayedMinigame) {
-			justPlayedMinigame = false 
-		}
+        if (!collidingWithLeftBox && !collidingWithRightBox) {
+            console.log("The player is NOT colliding with any boxes.");
+            isMinigamePlayable = true;
+            if(justPlayedMinigame) {
+                justPlayedMinigame = false 
             }
-        // }
+        }
     }
+
     triggerMiniGame(miniGame) {
         console.log("triggerMiniGame triggered")
         console.log(isMinigamePlayable);
@@ -125,7 +116,7 @@ class MiniGameA extends Phaser.Scene {
 
         const scoreMessage = `MiniGame A ended! You pressed 'A' ${this.counter} times.`;
         console.log(scoreMessage);
-	justPlayedMinigame=true
+	    justPlayedMinigame=true
         alert(scoreMessage); // Replace with better UI if desired
     }
 }
@@ -144,7 +135,7 @@ class MiniGameB extends Phaser.Scene {
 
         this.input.keyboard.on('keydown-B', this.incrementCounter, this);
         this.time.delayedCall(3000, this.endMiniGame, [], this);
-	isPlayingMinigame=true
+	    isPlayingMinigame=true
     }
 
     incrementCounter() {
@@ -158,8 +149,8 @@ class MiniGameB extends Phaser.Scene {
 
         const scoreMessage = `MiniGame B ended! You pressed 'B' ${this.counter} times.`;
         console.log(scoreMessage);
-	justPlayedMinigame = true
-	isPlayingMinigame = false
+        justPlayedMinigame = true
+        isPlayingMinigame = false
         alert(scoreMessage); // Replace with better UI if desired
     }
 }
