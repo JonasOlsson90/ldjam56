@@ -1,5 +1,6 @@
 let booted = true;
 let splash;
+let framerate = 6;
     
 class MainScene extends Phaser.Scene {
     constructor() {
@@ -11,11 +12,25 @@ class MainScene extends Phaser.Scene {
         this.load.image('player', 'assets/box.png'); // Replace with actual path
         this.load.image('box', 'assets/button.png'); // Replace with actual path
         this.load.image('splash', 'assets/splash.png');
+	this.load.image('laoban_stand1', 'assets/laoban_stand1.png');
+	this.load.image('laoban_stand2', 'assets/laoban_stand2.png');
     }
 
     create() {
+
+
+	this.anims.create({
+		key: 'laoban_stand',
+		frames: [{key: 'laoban_stand1'}, {key: 'laoban_stand2'}],
+		frameRate: framerate,
+		repeat: -1
+	});
+
+	
+
         // Create player
-        this.player = this.physics.add.sprite(400, 300, 'player').setCollideWorldBounds(true);
+        this.player = this.physics.add.sprite(400, 300, 'laoban_stand1').setCollideWorldBounds(true);
+	this.player.anims.play('laoban_stand');
         
         // Create boxes
         this.boxes = this.physics.add.staticGroup();
