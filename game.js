@@ -85,13 +85,11 @@ class MainScene extends Phaser.Scene {
 	//	this.player.scale.x = -1;
 	//}
 
-	//if(isMoving){
-	//	if(setAnimFlag)
-	//	this.player.anims.play('laoban_walk')
-	//} else if (!isMoving) {
+	if(isMoving){
+		this.player.anims.play('laoban_walk')
+    }
 		
-	//	this.player.anims.play('laoban_stand')
-	//}
+
 
         //console.log(isMoving)
         if(isPlayingMinigame || !isMoving){
@@ -105,7 +103,7 @@ class MainScene extends Phaser.Scene {
             if (this.cursors.left.isDown) {
                 this.player.setVelocityX(-speed);
             } else if (this.cursors.right.isDown) {
-		this.player.scale.x = -1
+		        //this.player.sprite.scale = -1
                 this.player.setVelocityX(speed);
             }
 
@@ -218,25 +216,42 @@ class MiniGameB extends Phaser.Scene {
     }
 }
 
+let factor = 1.2;
 class MiniGameBalanceLaw extends Phaser.Scene {
     constructor() {
         super({ key: 'MiniGameC' });
     }
 
     create() {
-        this.counter = 0;
+        this.counter = 1;
         this.timerText = this.add.text(400, 300, 'MiniGame C: Press LEFT and RIGHT', {
             fontSize: '32px',
             fill: '#fff',
         }).setOrigin(0.5);
 
-        this.input.keyboard.on('keydown-C', this.incrementCounter, this);
-        this.time.delayedCall(3000, this.endMiniGame, [], this);
+        this.input.keyboard.on('keydown-RIGHT', this.incrementCounter, this);
+        this.input.keyboard.on('keydown-LEFT', this.decrementCounter, this);
+        this.time.delayedCall(15000, this.endMiniGame, [], this);
 	    isPlayingMinigame=true;
     }
 
     incrementCounter() {
-        this.counter++;
+        this.counter += 5;
+    }
+
+    decrementCounter() {
+        this.counter -= 5;
+    }
+
+    update() {
+        if (this.counter > 0) {
+            this.counter += factor;
+        }
+        if (this.counter < 0) {
+            this.counter -= factor;
+        }
+        // factor *= this.counter;
+        console.log(this.counter);
     }
 
     endMiniGame() {
@@ -244,7 +259,7 @@ class MiniGameBalanceLaw extends Phaser.Scene {
         this.scene.stop();
         this.scene.resume('MainScene');
 
-        const scoreMessage = `MiniGame C ended! You pressed 'B' ${this.counter} times.`;
+        const scoreMessage = `End balance is ${this.counter}`;
         console.log(scoreMessage);
         justPlayedMinigame = true;
         isPlayingMinigame = false;
