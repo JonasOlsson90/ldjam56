@@ -217,6 +217,8 @@ class MiniGameB extends Phaser.Scene {
 }
 
 let factor = 1.2;
+let divider = 4;
+let degrees = 0;
 class MiniGameBalanceLaw extends Phaser.Scene {
     constructor() {
         super({ key: 'MiniGameC' });
@@ -251,7 +253,11 @@ class MiniGameBalanceLaw extends Phaser.Scene {
             this.counter -= factor;
         }
         // factor *= this.counter;
-        console.log(this.counter);
+        degrees = this.counter / divider;
+        console.log(degrees);
+        if (degrees > 50 || degrees < -50) {
+            this.game.pause();
+        }
     }
 
     endMiniGame() {
