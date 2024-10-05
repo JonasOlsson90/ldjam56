@@ -57,15 +57,19 @@
     
         const collidingWithLeftBox = Phaser.Geom.Intersects.RectangleToRectangle(playerBounds, leftBoxBounds);
         const collidingWithRightBox = Phaser.Geom.Intersects.RectangleToRectangle(playerBounds, rightBoxBounds);
-        const isMainScenePaused = !this.scene.isPaused('MainScene');
-        console.log("isMainScenePaused: " + isMainScenePaused);
+        // const isMainScenePaused = !this.scene.isPaused('MainScene');
+        // const isMMG1Paused = !this.scene.isPaused('MiniGameA');
+        // const isMG2Paused = !this.scene.isPaused('MiniGameB');
+        // console.log("isMainScenePaused: " + isMainScenePaused);
+        // console.log("MiniGameA: " + isMMG1Paused);
+        // console.log("MiniGameB: " + isMG2Paused);
     
-        if (isMainScenePaused) {
+        // if (isMainScenePaused) {
             if (!collidingWithLeftBox && !collidingWithRightBox) {
                 console.log("The player is NOT colliding with any boxes.");
                 isMinigamePlayable = true;
             }
-        }
+        // }
     }
     triggerMiniGame(miniGame) {
         console.log("triggerMiniGame triggered")
@@ -77,6 +81,7 @@
                 this.scene.pause();
                 this.scene.launch(miniGame);
             }
+            this.scene.resume();
             console.log("here")
         }
     }
