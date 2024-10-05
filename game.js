@@ -90,7 +90,7 @@ class MainScene extends Phaser.Scene {
 
         const isAnythingCollidingWithAnything = collidingWithLeftBox || collidingWithRightBox || collidingWithBottomBox;
     
-        if (isAnythingCollidingWithAnything) {
+        if (!isAnythingCollidingWithAnything) {
             isMinigamePlayable = true;
             if(justPlayedMinigame) {
                 justPlayedMinigame = false 
@@ -179,14 +179,14 @@ class MiniGameB extends Phaser.Scene {
     }
 }
 
-class MiniGameC extends Phaser.Scene {
+class MiniGameBalanceLaw extends Phaser.Scene {
     constructor() {
         super({ key: 'MiniGameC' });
     }
 
     create() {
         this.counter = 0;
-        this.timerText = this.add.text(400, 300, 'MiniGame C: Press C', {
+        this.timerText = this.add.text(400, 300, 'MiniGame C: Press LEFT and RIGHT', {
             fontSize: '32px',
             fill: '#fff',
         }).setOrigin(0.5);
@@ -230,7 +230,7 @@ const config = {
             debug: false,
         },
     },
-    scene: [MainScene, MiniGameA, MiniGameB, MiniGameC],
+    scene: [MainScene, MiniGameA, MiniGameB, MiniGameBalanceLaw],
 };
 
 isMinigamePlayable = true;
