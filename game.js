@@ -2,6 +2,9 @@ let booted = true;
 let splash;
 let framerate = 6;
 let isWalking = false;
+let isMinigameActive = false;
+let minigameCounts = {MiniGameA: 0, MiniGameB: 0, MiniGameBalanceLaw: 0};
+let boxNames = ["MiniGameA", "MiniGameB", "MiniGameBalanceLaw"];
     
 class MainScene extends Phaser.Scene {
     constructor() {
@@ -9,7 +12,7 @@ class MainScene extends Phaser.Scene {
         this.timeRemaining = 30; // Countdown from 30 seconds
         this.timerText = null; // To hold the text object
         this.timerEvent = null; // To hold the timer event
-        this.boxCounts = [0, 0, 0]; // Initialize counts for each box
+        // this.boxCounts = [0, 0, 0]; // Initialize counts for each box
         this.boxTextObjects = []; // To hold text objects above boxes
     }
 
@@ -66,15 +69,15 @@ class MainScene extends Phaser.Scene {
         this.leftDesk = this.physics.add.sprite(200,300, 'desk1');
         this.physics.add.existing(this.leftDesk);
         this.leftDesk.anims.play('desk')
-        this.createCounterText(200, 260, 0); // Position above the left box
+        this.createCounterText(200, 260, "MiniGameA"); // Position above the left box
 
         this.rightDesk = this.physics.add.sprite(600,300, 'desk1');
         this.rightDesk.anims.play('desk')
-        this.createCounterText(600, 260, 1); // Position above the right box
+        this.createCounterText(600, 260, "MiniGameB"); // Position above the right box
 
         this.bottomDesk = this.physics.add.sprite(400,500, 'desk1');
         this.bottomDesk.anims.play('desk')
-        this.createCounterText(400, 460, 2); // Position above the bottom box
+        this.createCounterText(400, 460, "MiniGameBalanceLaw"); // Position above the bottom box
 
         // Input setup
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -97,13 +100,13 @@ class MainScene extends Phaser.Scene {
         this.startRandomIncrement();
     }
 
-    createCounterText(x, y, index) {
-        const text = this.add.text(x, y, this.boxCounts[index], {
+    createCounterText(x, y, minigame) {
+        const text = this.add.text(x, y, minigameCounts[minigame], {
             fontSize: '24px',
             fill: '#fff',
         }).setOrigin(0.5);
         
-        this.boxTextObjects[index] = text; // Store the text object in the array
+        this.boxTextObjects[boxNames.indexOf(minigame)] = text; // Store the text object in the array
     }
 
     startRandomIncrement() {
@@ -116,11 +119,12 @@ class MainScene extends Phaser.Scene {
     }
     
     incrementRandomBox() {
-        const randomIndex = Phaser.Math.Between(0, this.boxCounts.length - 1); // Randomly select an index
-        this.boxCounts[randomIndex]++;
+        if (isMinigameActive) return; // Don't increment if a mini-game is active
+        const randomIndex = Phaser.Math.Between(0, 2); // Randomly select an index
+        minigameCounts[boxNames[randomIndex]]++;
         
         // Update the corresponding text object
-        this.boxTextObjects[randomIndex].setText(this.boxCounts[randomIndex]);
+        this.boxTextObjects[randomIndex].setText(minigameCounts[boxNames[randomIndex]]);
     }
 
     updateTimer() {
@@ -233,6 +237,9 @@ class MainScene extends Phaser.Scene {
             // Pause the timer
             this.timerEvent.paused = true;
 
+            // Set the mini-game active flag
+            isMinigameActive = true;
+
             if (!this.scene.isPaused(miniGame)) {
                 this.scene.pause();
                 this.scene.launch(miniGame);
@@ -244,6 +251,7 @@ class MainScene extends Phaser.Scene {
 
 class MiniGameA extends Phaser.Scene {
     isPressed = false;
+    name = "MiniGameA";
     constructor() {
         super({ key: 'MiniGameA' });
     }
@@ -286,11 +294,19 @@ class MiniGameA extends Phaser.Scene {
         console.log(scoreMessage);
 	    justPlayedMinigame=true;
         isPlayingMinigame = false;
+        isMinigameActive = false;
+
+        // Reduce the corresponding box count
+        if (minigameCounts[this.name] > 0) {
+            minigameCounts[this.name]--; // Reduce the counter by one
+            mainScene.boxTextObjects[boxNames.indexOf(this.name)].setText(minigameCounts[this.name]); // Update the displayed text
+        }
     }
 }
 
 class MiniGameB extends Phaser.Scene {
     isPressed = false;
+    name = "MiniGameB";
     constructor() {
         super({ key: 'MiniGameB' });
     }
@@ -333,6 +349,13 @@ class MiniGameB extends Phaser.Scene {
         console.log(scoreMessage);
         justPlayedMinigame = true;
         isPlayingMinigame = false;
+        isMinigameActive = false;
+
+        // Reduce the corresponding box count
+        if (minigameCounts[this.name] > 0) {
+            minigameCounts[this.name]--; // Reduce the counter by one
+            mainScene.boxTextObjects[boxNames.indexOf(this.name)].setText(minigameCounts[this.name]); // Update the displayed text
+        }
     }
 }
 
@@ -340,6 +363,7 @@ let factor = 1.2;
 let divider = 4;
 let degrees = 0;
 class MiniGameBalanceLaw extends Phaser.Scene {
+    name = "MiniGameBalanceLaw";
     constructor() {
         super({ key: 'MiniGameBalanceLaw' });
     }
@@ -397,6 +421,13 @@ class MiniGameBalanceLaw extends Phaser.Scene {
         console.log(scoreMessage);
         justPlayedMinigame = true;
         isPlayingMinigame = false;
+        isMinigameActive = false;
+
+        // Reduce the corresponding box count
+        if (minigameCounts[this.name] > 0) {
+            minigameCounts[this.name]--; // Reduce the counter by one
+            mainScene.boxTextObjects[boxNames.indexOf(this.name)].setText(minigameCounts[this.name]); // Update the displayed text
+        }
     }
 }
 
