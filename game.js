@@ -369,6 +369,12 @@ class MiniGameB extends Phaser.Scene {
         const image1 = this.add.image(0, 0, "minigame_splash");
         image1.setOrigin(0,0);
 
+
+        this.topText = this.add.text(400, 100, 'STOP THE MEAN VIDEOS!', {fontSize: '32px',fill: '#fff',}).setOrigin(0.5);
+        this.bottomText = this.add.text(400, 500, 'Press SPACE to Copyright Claim', {fontSize: '32px',fill: '#fff',}).setOrigin(0.5);
+
+
+
         // Set up the player
         this.laoban_sue = this.physics.add.sprite(100, 300, 'laoban_sue1'); // Replace 'dev1' with your player sprite
         this.laoban_sue.setCollideWorldBounds(true);
