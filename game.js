@@ -128,6 +128,12 @@ class MainScene extends Phaser.Scene {
             fill: '#fff',
         }).setOrigin(0.5);
 
+
+        this.bottom = this.add.text(400, 570, 'Walk over to worker to micro manage', {
+            fontSize: '32px',
+            fill: '#fff',
+        }).setOrigin(0.5);
+
         this.startReleaseCountdown();
 
         // Start the random incrementing
