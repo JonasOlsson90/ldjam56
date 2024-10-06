@@ -410,15 +410,15 @@ class MiniGameB extends Phaser.Scene {
         
         this.video1 = this.physics.add.sprite((Math.ceil(Math.random() * 800)+800),Math.ceil(Math.random() * 600), 'video1');
         this.video1.scale = 2;
-        this.video1.setVelocityX(-200)
+        this.video1.setVelocityX(-250)
 
         this.video2 = this.physics.add.sprite((Math.ceil(Math.random() * 800)+800),Math.ceil(Math.random() * 600), 'video2');
         this.video2.scale = 2;
-        this.video2.setVelocityX(-200)
+        this.video2.setVelocityX(-250)
 
         this.video3 = this.physics.add.sprite((Math.ceil(Math.random() * 800)+800),Math.ceil(Math.random() * 600), 'video3');
         this.video3.scale = 2;
-        this.video3.setVelocityX(-200)
+        this.video3.setVelocityX(-250)
 
 
         this.anims.create({
@@ -464,13 +464,15 @@ class MiniGameB extends Phaser.Scene {
 
 
         this.collidingWithVideo1 = false
+        this.collidingWithVideo2 = false
+        this.collidingWithVideo3 = false
 
 
         // Move the player up and down
         if (this.cursors.up.isDown) {
-            this.laoban_sue.setVelocityY(-200);
+            this.laoban_sue.setVelocityY(-300);
         } else if (this.cursors.down.isDown) {
-            this.laoban_sue.setVelocityY(200);
+            this.laoban_sue.setVelocityY(300);
         } else {
             this.laoban_sue.setVelocityY(0);
         }
@@ -479,13 +481,36 @@ class MiniGameB extends Phaser.Scene {
         this.lawsuits.children.iterate(lawsuit => {
             if (lawsuit) {
                 lawsuit.setVelocityX(400); // Set lawsuit speed
-                this.collidingWithVideo1 = Phaser.Geom.Intersects.RectangleToRectangle(lawsuit, this.video1);
-                console.log(Phaser.Geom.Intersects.RectangleToRectangle(lawsuit, this.video1))
+                // Use .getBounds() to get rectangle bounds
+                this.collidingWithVideo1 = Phaser.Geom.Intersects.RectangleToRectangle(lawsuit.getBounds(), this.video1.getBounds());
+                this.collidingWithVideo2 = Phaser.Geom.Intersects.RectangleToRectangle(lawsuit.getBounds(), this.video2.getBounds());
+                this.collidingWithVideo3 = Phaser.Geom.Intersects.RectangleToRectangle(lawsuit.getBounds(), this.video3.getBounds());
+
+                if(this.collidingWithVideo1){
+                    lawsuit.destroy();
+                    this.video1.setPosition(Math.ceil(Math.random() * 800)+800,Math.ceil(Math.random() * 600))
+                }
+
+                if(this.collidingWithVideo2){
+                    lawsuit.destroy();
+                    this.video2.setPosition(Math.ceil(Math.random() * 800)+800,Math.ceil(Math.random() * 600))
+                }
+
+                if(this.collidingWithVideo3){
+                    lawsuit.destroy();
+                    this.video3.setPosition(Math.ceil(Math.random() * 800)+800,Math.ceil(Math.random() * 600))
+                }
             }
         });
 
+       
+
         if(this.collidingWithVideo1){
-            //console.log("got em!")
+            console.log("got em!")
+        }
+
+        if(this.collidingWithVideo1){
+            console.log("got em!")
         }
     }
 
