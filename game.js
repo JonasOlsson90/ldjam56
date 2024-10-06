@@ -387,6 +387,7 @@ class MiniGameA extends Phaser.Scene {
 
 class MiniGameB extends Phaser.Scene {
     isPressed = false;
+    lost = false;
     name = "MiniGameB";
     constructor() {
         super({ key: 'MiniGameB' });
@@ -410,17 +411,20 @@ class MiniGameB extends Phaser.Scene {
         this.laoban_sue.scale = 2;
         //this.player.scaleX = -1;
         
-        this.video1 = this.physics.add.sprite((Math.ceil(Math.random() * 800)+800),Math.ceil(Math.random() * 600), 'video1');
+        this.video1 = this.physics.add.sprite((Math.ceil(Math.random() * 800)+800),Math.ceil(Math.random() * 500), 'video1');
         this.video1.scale = 2;
-        this.video1.setVelocityX(-250)
+        this.video1.setVelocityX(-250);
+        this.video1.setOrigin(0, 0);
 
-        this.video2 = this.physics.add.sprite((Math.ceil(Math.random() * 800)+800),Math.ceil(Math.random() * 600), 'video2');
+        this.video2 = this.physics.add.sprite((Math.ceil(Math.random() * 800)+800),Math.ceil(Math.random() * 500), 'video2');
         this.video2.scale = 2;
-        this.video2.setVelocityX(-250)
+        this.video2.setVelocityX(-250);
+        this.video2.setOrigin(0, 0);
 
-        this.video3 = this.physics.add.sprite((Math.ceil(Math.random() * 800)+800),Math.ceil(Math.random() * 600), 'video3');
+        this.video3 = this.physics.add.sprite((Math.ceil(Math.random() * 800)+800),Math.ceil(Math.random() * 500), 'video3');
         this.video3.scale = 2;
-        this.video3.setVelocityX(-250)
+        this.video3.setVelocityX(-250);
+        this.video3.setOrigin(0, 0);
 
 
         this.anims.create({
@@ -490,22 +494,29 @@ class MiniGameB extends Phaser.Scene {
 
                 if(this.collidingWithVideo1){
                     lawsuit.destroy();
-                    this.video1.setPosition(Math.ceil(Math.random() * 800)+800,Math.ceil(Math.random() * 600))
+                    this.video1.setPosition(Math.ceil(Math.random() * 800)+800,Math.ceil(Math.random() * 500))
                 }
 
                 if(this.collidingWithVideo2){
                     lawsuit.destroy();
-                    this.video2.setPosition(Math.ceil(Math.random() * 800)+800,Math.ceil(Math.random() * 600))
+                    this.video2.setPosition(Math.ceil(Math.random() * 800)+800,Math.ceil(Math.random() * 500))
                 }
 
                 if(this.collidingWithVideo3){
                     lawsuit.destroy();
-                    this.video3.setPosition(Math.ceil(Math.random() * 800)+800,Math.ceil(Math.random() * 600))
+                    this.video3.setPosition(Math.ceil(Math.random() * 800)+800,Math.ceil(Math.random() * 500))
                 }
 
                 
             }
         });
+
+
+
+        if (this.video1.x <= 0 || this.video2.x <= 0 || this.video3.x <= 0) {
+            this.lost = true;
+            this.endMiniGame();
+        }
 
         if(this.collidingWithVideo1){
             console.log("got em!")
@@ -554,7 +565,7 @@ class MiniGameB extends Phaser.Scene {
         isMinigameActive = false;
 
         // Reduce the corresponding box count
-        if (minigameCounts[this.name] > 0) {
+        if (minigameCounts[this.name] > 0 && !this.lost) {
             minigameCounts[this.name]--; // Reduce the counter by one
             mainScene.boxTextObjects[boxNames.indexOf(this.name)].setText(minigameCounts[this.name]); // Update the displayed text
         }
