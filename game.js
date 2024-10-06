@@ -17,19 +17,28 @@ class MainScene extends Phaser.Scene {
     }
 
     preload() {
-        // Load your assets here (e.g., player and box images)
         this.load.image('player', 'assets/box.png'); // Replace with actual path
-        //this.load.image('box', 'assets/button.png'); // Replace with actual path
-        this.load.image('office', 'assets/office.png');
 
+        this.load.image('office', 'assets/office.png');
+        this.load.image('minigame_splash', 'assets/minigame_splash.png');
         this.load.image('splash', 'assets/splash.png');
+        
         this.load.image('laoban_stand1', 'assets/laoban_stand1.png');
         this.load.image('laoban_stand2', 'assets/laoban_stand2.png');
         this.load.image('laoban_walk1', 'assets/laoban_walk1.png');
         this.load.image('laoban_walk2', 'assets/laoban_walk2.png');
+        this.load.image('laoban_whip0', 'assets/laoban_whip0.png');
+        this.load.image('laoban_whip1', 'assets/laoban_whip1.png');
+        this.load.image('laoban_whip2', 'assets/laoban_whip2.png');
+        this.load.image('laoban_whip3', 'assets/laoban_whip3.png');
+        this.load.image('laoban_whip4', 'assets/laoban_whip4.png');
 
         this.load.image('desk1', 'assets/desk1.png');
         this.load.image('desk2', 'assets/desk2.png');
+
+        this.load.image('dev1', 'assets/dev1.png');
+        this.load.image('dev2', 'assets/dev2.png');
+
 
     }
 
@@ -257,11 +266,46 @@ class MiniGameA extends Phaser.Scene {
     }
 
     create() {
+
+        const image1 = this.add.image(0, 0, "minigame_splash");
+        image1.setOrigin(0,0);
+
+
         this.counter = 0;
-        this.timerText = this.add.text(400, 300, 'MiniGame A: Press A', {
+        this.topText = this.add.text(400, 100, 'CRUNCH TIME!', {
             fontSize: '32px',
             fill: '#fff',
         }).setOrigin(0.5);
+
+        this.bottomText = this.add.text(400, 500, 'Mash A to motivate workers!', {
+            fontSize: '32px',
+            fill: '#fff',
+        }).setOrigin(0.5);
+
+
+        this.anims.create({
+            key: 'dev',
+            frames: [{key: 'dev1'}, {key: 'dev2'}],
+            frameRate: framerate,
+            repeat: -1
+        })
+
+        this.anims.create({
+            key: 'laoban_whip_anim',
+            frames: [{key: 'laoban_whip0'}, {key: 'laoban_whip1'}, {key: 'laoban_whip2'},{key: 'laoban_whip3'},{key: 'laoban_whip4'}],
+            frameRate: framerate*4,
+            repeat: 0
+        })
+        this.dev = this.physics.add.sprite(500,300, 'desk1');
+        this.dev.anims.play('dev')
+        this.dev.scale = 2;
+
+        this.laoban_whip = this.physics.add.sprite(350,250, 'laoban_whip4');
+        //this.laoban_whip.anims.play('laoban_whip_anim')
+        this.laoban_whip.scale = 2;
+
+
+
 
         this.input.keyboard.on('keydown-A', this.incrementCounter, this);
         this.input.keyboard.on('keyup-A', this.onKeyUp, this);
@@ -276,6 +320,7 @@ class MiniGameA extends Phaser.Scene {
     incrementCounter() {
         if (!this.isPressed) {
             this.counter++;
+            this.laoban_whip.anims.play('laoban_whip_anim')
             this.isPressed = true;
         }
     }
