@@ -296,7 +296,7 @@ class MiniGameBalanceLaw extends Phaser.Scene {
         degrees = this.counter / divider;
         console.log(degrees);
         if (degrees > 50 || degrees < -50) {
-            this.game.pause();
+            this.endMiniGame();
         }
     }
 
