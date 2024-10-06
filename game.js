@@ -131,15 +131,17 @@ class MainScene extends Phaser.Scene {
             console.log(`TinyCreatures ${releaseCounter} was released!`);
             this.timeRemaining = 30;
             this.timerText.setText(`Time: ${this.timeRemaining}`);
-        } else {
-            // Start the countdown
-            this.timerEvent = this.time.addEvent({
-            delay: 1000, // 1 second
-            callback: this.updateTimer,
-            callbackScope: this,
-            loop: true
-        });
+            delay -= 250;
+            this.restartRandomIncrement();
         }
+
+        // Start the countdown
+        this.timerEvent = this.time.addEvent({
+        delay: 1000, // 1 second
+        callback: this.updateTimer,
+        callbackScope: this,
+        loop: true
+        });
 
         releaseCounter++;
     }
@@ -160,6 +162,12 @@ class MainScene extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+    }
+
+    restartRandomIncrement() {
+        // Stop the current event if necessary
+        this.time.removeAllEvents(); // Clear existing events
+        this.startRandomIncrement(); // Restart with the new delay
     }
     
     incrementRandomBox() {
@@ -584,7 +592,7 @@ class MiniGameBalanceLaw extends Phaser.Scene {
 
         this.input.keyboard.on('keydown-RIGHT', this.incrementCounter, this);
         this.input.keyboard.on('keydown-LEFT', this.decrementCounter, this);
-        this.time.delayedCall(15000, this.endMiniGame, [], this);
+        this.time.delayedCall(8000, this.endMiniGame, [], this);
 	    isPlayingMinigame=true;
         this.lost = false;
     }
