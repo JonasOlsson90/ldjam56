@@ -173,7 +173,6 @@ class MiniGameA extends Phaser.Scene {
     }
 
     create() {
-        console.log("create");
         this.counter = 0;
         this.timerText = this.add.text(400, 300, 'MiniGame A: Press A', {
             fontSize: '32px',
@@ -187,12 +186,10 @@ class MiniGameA extends Phaser.Scene {
     }
 
     onKeyUp() {
-        console.log("onKeyUp");
         this.isPressed = false;
     }
 
     incrementCounter() {
-        console.log("incrementCounter");
         if (!this.isPressed) {
             this.counter++;
             this.isPressed = true;
@@ -200,7 +197,6 @@ class MiniGameA extends Phaser.Scene {
     }
 
     endMiniGame() {
-        console.log("endMiniGame");
         this.input.keyboard.off('keydown-A', this.incrementCounter, this);
         this.input.keyboard.off('keyup-A', this.onKeyUp, this);
         this.scene.stop();
@@ -220,7 +216,6 @@ class MiniGameB extends Phaser.Scene {
     }
 
     create() {
-        console.log("create");
         this.counter = 0;
         this.timerText = this.add.text(400, 300, 'MiniGame B: Press B', {
             fontSize: '32px',
@@ -234,12 +229,10 @@ class MiniGameB extends Phaser.Scene {
     }
 
     onKeyUp() {
-        console.log("onKeyUp");
         this.isPressed = false;
     }
 
     incrementCounter() {
-        console.log("incrementCounter");
         if (!this.isPressed) {
             this.counter++;
             this.isPressed = true;
@@ -247,7 +240,6 @@ class MiniGameB extends Phaser.Scene {
     }
 
     endMiniGame() {
-        console.log("endMiniGame");
         this.input.keyboard.off('keydown-B', this.incrementCounter, this);
         this.input.keyboard.off('keyup-B', this.onKeyUp, this);
         this.scene.stop();
