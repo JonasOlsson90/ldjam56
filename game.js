@@ -9,6 +9,8 @@ class MainScene extends Phaser.Scene {
         this.timeRemaining = 30; // Countdown from 30 seconds
         this.timerText = null; // To hold the text object
         this.timerEvent = null; // To hold the timer event
+        this.boxCounts = [0, 0, 0]; // Initialize counts for each box
+        this.boxTextObjects = []; // To hold text objects above boxes
     }
 
     preload() {
@@ -64,12 +66,15 @@ class MainScene extends Phaser.Scene {
         this.leftDesk = this.physics.add.sprite(200,300, 'desk1');
         this.physics.add.existing(this.leftDesk);
         this.leftDesk.anims.play('desk')
+        this.createCounterText(200, 260, 0); // Position above the left box
 
         this.rightDesk = this.physics.add.sprite(600,300, 'desk1');
         this.rightDesk.anims.play('desk')
+        this.createCounterText(600, 260, 1); // Position above the right box
 
         this.bottomDesk = this.physics.add.sprite(400,500, 'desk1');
         this.bottomDesk.anims.play('desk')
+        this.createCounterText(400, 460, 2); // Position above the bottom box
 
         // Input setup
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -87,6 +92,35 @@ class MainScene extends Phaser.Scene {
             callbackScope: this,
             loop: true
         });
+
+        // Start the random incrementing
+        this.startRandomIncrement();
+    }
+
+    createCounterText(x, y, index) {
+        const text = this.add.text(x, y, this.boxCounts[index], {
+            fontSize: '24px',
+            fill: '#fff',
+        }).setOrigin(0.5);
+        
+        this.boxTextObjects[index] = text; // Store the text object in the array
+    }
+
+    startRandomIncrement() {
+        this.time.addEvent({
+            delay: 3000, // 3 seconds
+            callback: this.incrementRandomBox,
+            callbackScope: this,
+            loop: true
+        });
+    }
+    
+    incrementRandomBox() {
+        const randomIndex = Phaser.Math.Between(0, this.boxCounts.length - 1); // Randomly select an index
+        this.boxCounts[randomIndex]++;
+        
+        // Update the corresponding text object
+        this.boxTextObjects[randomIndex].setText(this.boxCounts[randomIndex]);
     }
 
     updateTimer() {
