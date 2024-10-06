@@ -36,6 +36,12 @@ class MainScene extends Phaser.Scene {
         this.load.image('laoban_balance', 'assets/laoban_balance.png');
         this.load.image('laoban_tipping', 'assets/laoban_tipping.png');
         this.load.image('laoban_falling', 'assets/laoban_falling.png');
+        this.load.image('laoban_sue1', 'assets/laoban_sue1.png');
+        this.load.image('laoban_sue2', 'assets/laoban_sue2.png');
+        this.load.image('laoban_throw1', 'assets/laoban_throw1.png');
+        this.load.image('laoban_throw2', 'assets/laoban_throw2.png');
+        this.load.image('laoban_throw3', 'assets/laoban_throw3.png');
+
 
         this.load.image('balance_top', 'assets/balance_top.png');
 
@@ -364,9 +370,26 @@ class MiniGameB extends Phaser.Scene {
         image1.setOrigin(0,0);
 
         // Set up the player
-        this.player = this.physics.add.sprite(100, 300, 'laoban_stand1'); // Replace 'dev1' with your player sprite
-        this.player.setCollideWorldBounds(true);
-        this.player.scaleX = -1;
+        this.laoban_sue = this.physics.add.sprite(100, 300, 'laoban_sue1'); // Replace 'dev1' with your player sprite
+        this.laoban_sue.setCollideWorldBounds(true);
+        //this.player.scaleX = -1;
+
+
+        this.anims.create({
+            key: 'laoban_sue',
+            frames: [{key: 'laoban_sue1'}, {key: 'laoban_sue2'}],
+            frameRate: framerate,
+            repeat: -1
+        })
+
+        this.anims.create({
+            key: 'laoban_throw',
+            frames: [{key: 'laoban_throw1'}, {key: 'laoban_throw2'}, {key: 'laoban_throw3'}, {key: 'laoban_sue1'}],
+            frameRate: framerate * 4,
+            repeat: 0
+        })
+
+
 
         // Create a group for lawsuits
         this.lawsuits = this.physics.add.group({
@@ -387,11 +410,11 @@ class MiniGameB extends Phaser.Scene {
     update() {
         // Move the player up and down
         if (this.cursors.up.isDown) {
-            this.player.setVelocityY(-200);
+            this.laoban_sue.setVelocityY(-200);
         } else if (this.cursors.down.isDown) {
-            this.player.setVelocityY(200);
+            this.laoban_sue.setVelocityY(200);
         } else {
-            this.player.setVelocityY(0);
+            this.laoban_sue.setVelocityY(0);
         }
 
         // Update lawsuits
@@ -407,8 +430,10 @@ class MiniGameB extends Phaser.Scene {
         const lawsuit = this.lawsuits.get();
 
         if (lawsuit) {
+            this.laoban_sue.anims.play('laoban_throw')
+
             // Set lawsuit position to the player's position and reset its velocity
-            lawsuit.setPosition(this.player.x + 20, this.player.y);
+            lawsuit.setPosition(this.laoban_sue.x + 20, this.laoban_sue.y);
             lawsuit.setActive(true);
             lawsuit.setVisible(true);
             lawsuit.body.velocity.x = 400; // Lawsuit speed to the right
