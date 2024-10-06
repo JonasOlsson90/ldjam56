@@ -11,12 +11,18 @@ class MainScene extends Phaser.Scene {
     preload() {
         // Load your assets here (e.g., player and box images)
         this.load.image('player', 'assets/box.png'); // Replace with actual path
-        this.load.image('box', 'assets/button.png'); // Replace with actual path
+        //this.load.image('box', 'assets/button.png'); // Replace with actual path
+        this.load.image('office', 'assets/office.png');
+
         this.load.image('splash', 'assets/splash.png');
-	this.load.image('laoban_stand1', 'assets/laoban_stand1.png');
-	this.load.image('laoban_stand2', 'assets/laoban_stand2.png');
-	this.load.image('laoban_walk1', 'assets/laoban_walk1.png');
-	this.load.image('laoban_walk2', 'assets/laoban_walk2.png')
+        this.load.image('laoban_stand1', 'assets/laoban_stand1.png');
+        this.load.image('laoban_stand2', 'assets/laoban_stand2.png');
+        this.load.image('laoban_walk1', 'assets/laoban_walk1.png');
+        this.load.image('laoban_walk2', 'assets/laoban_walk2.png');
+
+        this.load.image('desk1', 'assets/desk1.png');
+        this.load.image('desk2', 'assets/desk2.png');
+
     }
 
     create() {
@@ -36,16 +42,28 @@ class MainScene extends Phaser.Scene {
 		repeat: -1
 	})
 
+    this.anims.create({
+		key: 'desk',
+		frames: [{key: 'desk1'}, {key: 'desk2'}],
+		frameRate: framerate,
+		repeat: -1
+	})
+
+        const image1 = this.add.image(0, 0, "office");
+        image1.setOrigin(0,0);
 
         // Create player
         this.player = this.physics.add.sprite(400, 300, 'laoban_stand1').setCollideWorldBounds(true);
-	this.player.anims.play('laoban_stand');
+	    this.player.anims.play('laoban_stand');
         
         // Create boxes
         this.boxes = this.physics.add.staticGroup();
-        const leftBox = this.boxes.create(200, 300, 'box');
-        const rightBox = this.boxes.create(600, 300, 'box');
-        const bottomBox = this.boxes.create(400, 500, 'box');
+        const leftBox = this.boxes.create(200, 300, 'desk1');
+        // this.leftBox.anims.play('desk');
+
+        const rightBox = this.boxes.create(600, 300, 'desk1');
+
+        const bottomBox = this.boxes.create(400, 500, 'desk1');
 
         // Set up overlap detection
         this.physics.add.overlap(this.player, leftBox, () => this.triggerMiniGame('MiniGameA'), null, this);
