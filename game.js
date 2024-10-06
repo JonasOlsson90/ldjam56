@@ -22,6 +22,10 @@ class MainScene extends Phaser.Scene {
         this.load.image('player', 'assets/box.png'); // Replace with actual path
 
         this.load.image('office', 'assets/office.png');
+        this.load.image('party', 'assets/party.png');
+
+
+
         this.load.image('minigame_splash', 'assets/minigame_splash.png');
         this.load.image('splash', 'assets/splash.png');
         this.load.image('lawsuit', 'assets/button.png');
@@ -186,6 +190,7 @@ class MainScene extends Phaser.Scene {
         this.timerText.setText(`Time: ${this.timeRemaining}`);
         
         if (this.timeRemaining <= 0) {
+            this.triggerMiniGame('Party');
             this.startReleaseCountdown();
         }
     }
@@ -306,6 +311,65 @@ class MainScene extends Phaser.Scene {
     }
 }
 
+class Party extends Phaser.Scene {
+    isPressed = false;
+    name = "Party";
+    constructor() {
+        super({ key: 'Party' });
+    }
+
+    create() {
+
+        const bg = this.add.image(0, 0, "party");
+        bg.setOrigin(0,0);
+
+        this.anims.create({
+            key: 'laoban_party',
+            frames: [{key: 'laoban_party1'}, {key: 'laoban_party2'}],
+            frameRate: framerate,
+            repeat: -1
+        })
+        
+        this.laoban_party = this.physics.add.sprite(400, 300, 'laoban_party1');
+        this.laoban_party.anims.play('laoban_party');
+        this.laoban_party.scale = 2;
+
+
+
+        this.topText = this.add.text(400, 100, 'NEW RELEASE!', {fontSize: '32px',fill: '#ff0000',}).setOrigin(0.5);
+        this.bottomText = this.add.text(400, 500, 'TIME TO PARTY!', {fontSize: '32px',fill: '#ff0000',}).setOrigin(0.5);
+        this.time.delayedCall(3000, this.endParty, [], this);
+        isPlayingMinigame=true;
+    }
+
+
+    endParty() {
+        this.scene.stop();
+        this.scene.resume('MainScene');
+
+        // Resume the timer
+        const mainScene = this.scene.get('MainScene');
+        mainScene.timerEvent.paused = false;
+
+
+        if (this.counter < 10) {
+            minigameStrikes[this.name]++;
+        }
+
+	    justPlayedMinigame=true;
+        isPlayingMinigame = false;
+        isMinigameActive = false;
+
+        // Reduce the corresponding box count
+        if (minigameCounts[this.name] > 0 && this.counter >= 10) {
+            minigameCounts[this.name]--; // Reduce the counter by one
+            mainScene.boxTextObjects[boxNames.indexOf(this.name)].setText(minigameCounts[this.name]); // Update the displayed text
+        }
+    }
+
+
+}
+
 class MiniGameA extends Phaser.Scene {
     isPressed = false;
     name = "MiniGameA";
@@ -409,6 +473,7 @@ class MiniGameB extends Phaser.Scene {
         this.laoban_sue = this.physics.add.sprite(100, 300, 'laoban_sue1'); // Replace 'dev1' with your player sprite
         this.laoban_sue.setCollideWorldBounds(true);
         this.laoban_sue.scale = 2;
+        this.laoban_sue.scale = 2;
         //this.player.scaleX = -1;
         
         this.video1 = this.physics.add.sprite((Math.ceil(Math.random() * 800)+800),Math.ceil(Math.random() * 500), 'video1');
@@ -448,10 +513,18 @@ class MiniGameB extends Phaser.Scene {
             repeat: -1
         })
 
+        this.anims.create({
+            key: 'copyright_claim',
+            frames: [{key: 'copyright_claim1'}, {key: 'copyright_claim2'}],
+            frameRate: framerate,
+            repeat: -1
+        })
+
 
 
         // Create a group for lawsuits
         this.lawsuits = this.physics.add.group({
+            defaultKey: 'copyright_claim1', // You need to load this lawsuit sprite in preload
             defaultKey: 'copyright_claim1', // You need to load this lawsuit sprite in preload
             maxSize: 10 // Limit the number of lawsuits on screen
         });
@@ -538,6 +611,8 @@ class MiniGameB extends Phaser.Scene {
             lawsuit.setPosition(this.laoban_sue.x + 20, this.laoban_sue.y);
             lawsuit.setActive(true);
             lawsuit.setVisible(true);
+            lawsuit.setScale(2);
+            lawsuit.anims.play('copyright_claim')
             lawsuit.setScale(2);
             lawsuit.anims.play('copyright_claim')
             lawsuit.body.velocity.x = 400; // Lawsuit speed to the right
@@ -714,7 +789,7 @@ const config = {
             debug: false,
         },
     },
-    scene: [MainScene, MiniGameA, MiniGameB, MiniGameBalanceLaw],
+    scene: [MainScene, MiniGameA, MiniGameB, MiniGameBalanceLaw, Party],
 };
 
 isMinigamePlayable = true;
