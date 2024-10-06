@@ -246,6 +246,7 @@ class MainScene extends Phaser.Scene {
 
     triggerMiniGame(miniGame) {
         // console.log("isMinigamePlayable: " + isMinigamePlayable);
+        if (minigameCounts[miniGame] <= 0) return;
         if (isMinigamePlayable === true){
             isMinigamePlayable = false;
 
