@@ -1,7 +1,7 @@
 let booted = true;
 let splash;
 let framerate = 6;
-let setAnimFlag = false;
+let isWalking = false;
     
 class MainScene extends Phaser.Scene {
     constructor() {
@@ -133,10 +133,17 @@ class MainScene extends Phaser.Scene {
 
         if(isMoving ){
             // this shit needs to be done just once.
-            this.player.anims.play('laoban_walk');
+            if(!isWalking) {
+                this.player.anims.play('laoban_walk');
+                isWalking = true;
+            }
         } else if (!isMoving) {
             // this also needs to be done just once.
-            this.player.anims.play('laoban_stand');
+            if(isWalking) {
+                this.player.anims.play('laoban_stand');
+                isWalking = false;
+            }
+            
         }
 
         //console.log(isMoving)
