@@ -3,7 +3,7 @@ let splash;
 let framerate = 6;
 let isWalking = false;
 let isMinigameActive = false;
-let minigameCounts = {MiniGameA: 0, MiniGameB: 0, MiniGameBalanceLaw: 0};
+let minigameCounts = {MiniGameA: 1, MiniGameB: 1, MiniGameBalanceLaw: 1};
 let minigameStrikes = {MiniGameA: 0, MiniGameB: 0, MiniGameBalanceLaw: 0};
 let boxNames = ["MiniGameA", "MiniGameB", "MiniGameBalanceLaw"];
     
@@ -349,7 +349,7 @@ class MiniGameA extends Phaser.Scene {
         isMinigameActive = false;
 
         // Reduce the corresponding box count
-        if (minigameCounts[this.name] > 0) {
+        if (minigameCounts[this.name] > 0 && this.counter >= 10) {
             minigameCounts[this.name]--; // Reduce the counter by one
             mainScene.boxTextObjects[boxNames.indexOf(this.name)].setText(minigameCounts[this.name]); // Update the displayed text
         }
@@ -534,6 +534,7 @@ class MiniGameBalanceLaw extends Phaser.Scene {
         this.input.keyboard.on('keydown-LEFT', this.decrementCounter, this);
         this.time.delayedCall(15000, this.endMiniGame, [], this);
 	    isPlayingMinigame=true;
+        this.lost = false;
     }
 
     incrementCounter() {
@@ -567,6 +568,7 @@ class MiniGameBalanceLaw extends Phaser.Scene {
 
         if (degrees > 50 || degrees < -50) {
             minigameStrikes[this.name]++;
+            this.lost = true;
             this.endMiniGame();
         }
 
@@ -589,7 +591,7 @@ class MiniGameBalanceLaw extends Phaser.Scene {
         isMinigameActive = false;
 
         // Reduce the corresponding box count
-        if (minigameCounts[this.name] > 0) {
+        if (minigameCounts[this.name] > 0 && !this.lost) {
             minigameCounts[this.name]--; // Reduce the counter by one
             mainScene.boxTextObjects[boxNames.indexOf(this.name)].setText(minigameCounts[this.name]); // Update the displayed text
         }
