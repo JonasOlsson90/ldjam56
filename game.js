@@ -6,6 +6,8 @@ let isMinigameActive = false;
 let minigameCounts = {MiniGameA: 1, MiniGameB: 1, MiniGameBalanceLaw: 1};
 let minigameStrikes = {MiniGameA: 0, MiniGameB: 0, MiniGameBalanceLaw: 0};
 let boxNames = ["MiniGameA", "MiniGameB", "MiniGameBalanceLaw"];
+let delay = 3000;
+let releaseCounter = 0;
     
 class MainScene extends Phaser.Scene {
     constructor() {
@@ -109,17 +111,29 @@ class MainScene extends Phaser.Scene {
             fontSize: '32px',
             fill: '#fff',
         }).setOrigin(0.5);
-    
-        // Start the countdown
-        this.timerEvent = this.time.addEvent({
+
+        this.startReleaseCountdown();
+
+        // Start the random incrementing
+        this.startRandomIncrement();
+    }
+
+    startReleaseCountdown() {
+        if (releaseCounter > 0) {
+            console.log(`TinyCreatures ${releaseCounter} was released!`);
+            this.timeRemaining = 30;
+            this.timerText.setText(`Time: ${this.timeRemaining}`);
+        } else {
+            // Start the countdown
+            this.timerEvent = this.time.addEvent({
             delay: 1000, // 1 second
             callback: this.updateTimer,
             callbackScope: this,
             loop: true
         });
+        }
 
-        // Start the random incrementing
-        this.startRandomIncrement();
+        releaseCounter++;
     }
 
     createCounterText(x, y, minigame) {
@@ -133,7 +147,7 @@ class MainScene extends Phaser.Scene {
 
     startRandomIncrement() {
         this.time.addEvent({
-            delay: 3000, // 3 seconds
+            delay: delay,
             callback: this.incrementRandomBox,
             callbackScope: this,
             loop: true
@@ -154,14 +168,11 @@ class MainScene extends Phaser.Scene {
         this.timerText.setText(`Time: ${this.timeRemaining}`);
         
         if (this.timeRemaining <= 0) {
-            this.timeRemaining = 0;
-            this.timerText.setText(`Time: ${this.timeRemaining}`);
-            // Optionally, trigger an event when the timer hits zero
-            this.endGame();
+            this.startReleaseCountdown();
         }
     }
 
-    endGame() {
+    gameOver() {
         // Stop the timer if needed
         // Transition to another scene or handle game logic here
         console.log("Time's up!"); // Placeholder for your game logic
@@ -623,3 +634,4 @@ isMinigamePlayable = true;
 justPlayedMinigame = false;
 isPlayingMinigame = false;
 const game = new Phaser.Game(config);
+this.lostthis.lost
