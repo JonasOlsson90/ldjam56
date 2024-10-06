@@ -6,6 +6,9 @@ let setAnimFlag = false;
 class MainScene extends Phaser.Scene {
     constructor() {
         super({ key: 'MainScene' });
+        this.timeRemaining = 30; // Countdown from 30 seconds
+        this.timerText = null; // To hold the text object
+        this.timerEvent = null; // To hold the timer event
     }
 
     preload() {
@@ -71,6 +74,38 @@ class MainScene extends Phaser.Scene {
 
         // Input setup
         this.cursors = this.input.keyboard.createCursorKeys();
+
+        // Create timer text
+        this.timerText = this.add.text(400, 20, `Time: ${this.timeRemaining}`, {
+            fontSize: '32px',
+            fill: '#fff',
+        }).setOrigin(0.5);
+    
+        // Start the countdown
+        this.timerEvent = this.time.addEvent({
+            delay: 1000, // 1 second
+            callback: this.updateTimer,
+            callbackScope: this,
+            loop: true
+        });
+    }
+
+    updateTimer() {
+        this.timeRemaining--;
+        this.timerText.setText(`Time: ${this.timeRemaining}`);
+        
+        if (this.timeRemaining <= 0) {
+            this.timeRemaining = 0;
+            this.timerText.setText(`Time: ${this.timeRemaining}`);
+            // Optionally, trigger an event when the timer hits zero
+            this.endGame();
+        }
+    }
+
+    endGame() {
+        // Stop the timer if needed
+        // Transition to another scene or handle game logic here
+        console.log("Time's up!"); // Placeholder for your game logic
     }
 
     update() {
@@ -156,7 +191,10 @@ class MainScene extends Phaser.Scene {
         // console.log("isMinigamePlayable: " + isMinigamePlayable);
         if (isMinigamePlayable === true){
             isMinigamePlayable = false;
-            // console.log("isMinigamePlayable: " + isMinigamePlayable)
+
+            // Pause the timer
+            this.timerEvent.paused = true;
+
             if (!this.scene.isPaused(miniGame)) {
                 this.scene.pause();
                 this.scene.launch(miniGame);
@@ -202,6 +240,10 @@ class MiniGameA extends Phaser.Scene {
         this.scene.stop();
         this.scene.resume('MainScene');
 
+        // Resume the timer
+        const mainScene = this.scene.get('MainScene');
+        mainScene.timerEvent.paused = false;
+
         const scoreMessage = `MiniGame A ended! You pressed 'A' ${this.counter} times.`;
         console.log(scoreMessage);
 	    justPlayedMinigame=true;
@@ -244,6 +286,10 @@ class MiniGameB extends Phaser.Scene {
         this.input.keyboard.off('keyup-B', this.onKeyUp, this);
         this.scene.stop();
         this.scene.resume('MainScene');
+
+        // Resume the timer
+        const mainScene = this.scene.get('MainScene');
+        mainScene.timerEvent.paused = false;
 
         const scoreMessage = `MiniGame B ended! You pressed 'B' ${this.counter} times.`;
         console.log(scoreMessage);
@@ -304,6 +350,10 @@ class MiniGameBalanceLaw extends Phaser.Scene {
         this.input.keyboard.off('keydown-C', this.incrementCounter, this);
         this.scene.stop();
         this.scene.resume('MainScene');
+
+        // Resume the timer
+        const mainScene = this.scene.get('MainScene');
+        mainScene.timerEvent.paused = false;
 
         const scoreMessage = `End balance is ${degrees}`;
         console.log(scoreMessage);
