@@ -476,6 +476,7 @@ class MiniGameBalanceLaw extends Phaser.Scene {
         })
 
         this.balance_top = this.physics.add.sprite(400,300, 'balance_top');
+        this.balance_top.scale = 2;
         this.laoban_balance = this.physics.add.sprite(400,300, 'laoban_balance');
 
 
