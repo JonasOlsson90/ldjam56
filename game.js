@@ -32,6 +32,12 @@ class MainScene extends Phaser.Scene {
         this.load.image('laoban_whip2', 'assets/laoban_whip2.png');
         this.load.image('laoban_whip3', 'assets/laoban_whip3.png');
         this.load.image('laoban_whip4', 'assets/laoban_whip4.png');
+        this.load.image('laoban_balance', 'assets/laoban_balance.png');
+        this.load.image('laoban_tipping', 'assets/laoban_tipping.png');
+        this.load.image('laoban_falling', 'assets/laoban_falling.png');
+
+        this.load.image('balance_top', 'assets/balance_top.png');
+
 
         this.load.image('desk1', 'assets/desk1.png');
         this.load.image('desk2', 'assets/desk2.png');
@@ -267,21 +273,11 @@ class MiniGameA extends Phaser.Scene {
 
     create() {
 
-        const image1 = this.add.image(0, 0, "minigame_splash");
-        image1.setOrigin(0,0);
-
-
+        const bg = this.add.image(0, 0, "minigame_splash");
+        bg.setOrigin(0,0);
         this.counter = 0;
-        this.topText = this.add.text(400, 100, 'CRUNCH TIME!', {
-            fontSize: '32px',
-            fill: '#fff',
-        }).setOrigin(0.5);
-
-        this.bottomText = this.add.text(400, 500, 'Mash A to motivate workers!', {
-            fontSize: '32px',
-            fill: '#fff',
-        }).setOrigin(0.5);
-
+        this.topText = this.add.text(400, 100, 'CRUNCH TIME!', {fontSize: '32px',fill: '#fff',}).setOrigin(0.5);
+        this.bottomText = this.add.text(400, 500, 'Mash A to motivate workers!', {fontSize: '32px',fill: '#fff',}).setOrigin(0.5);
 
         this.anims.create({
             key: 'dev',
@@ -299,13 +295,8 @@ class MiniGameA extends Phaser.Scene {
         this.dev = this.physics.add.sprite(500,300, 'desk1');
         this.dev.anims.play('dev')
         this.dev.scale = 2;
-
         this.laoban_whip = this.physics.add.sprite(350,250, 'laoban_whip4');
-        //this.laoban_whip.anims.play('laoban_whip_anim')
         this.laoban_whip.scale = 2;
-
-
-
 
         this.input.keyboard.on('keydown-A', this.incrementCounter, this);
         this.input.keyboard.on('keyup-A', this.onKeyUp, this);
@@ -452,15 +443,50 @@ class MiniGameBalanceLaw extends Phaser.Scene {
     }
 
     create() {
+
+        const bg = this.add.image(0, 0, "minigame_splash");
+        bg.setOrigin(0,0);
+
+        
         if (Math.floor(Math.random() * 10) % 2 === 0){
             this.counter = 1;
         } else {
             this.counter = -1;
         }
-        this.timerText = this.add.text(400, 300, 'MiniGame C: Press LEFT and RIGHT', {
-            fontSize: '32px',
-            fill: '#fff',
-        }).setOrigin(0.5);
+
+        this.anims.create({
+            key: 'balance',
+            frames: [{key: 'laoban_balance'}],
+            frameRate: framerate,
+            repeat: 0
+        })
+
+        this.anims.create({
+            key: 'falling',
+            frames: [{key: 'laoban_falling'}],
+            frameRate: framerate,
+            repeat: 0
+        })
+
+        this.anims.create({
+            key: 'tipping',
+            frames: [{key: 'laoban_tipping'}],
+            frameRate: framerate,
+            repeat: 0
+        })
+
+        this.balance_top = this.physics.add.sprite(400,300, 'balance_top');
+        this.laoban_balance = this.physics.add.sprite(400,300, 'laoban_balance');
+
+
+        this.laoban_balance.scale = 2;
+        this.laoban_balance.setOrigin(0.5, 0.5);
+        this.laoban_balance.body.allowRotation = true;
+
+        this.topText = this.add.text(400, 100, 'COMPETITORS ARE CATCHING UP!', {fontSize: '32px',fill: '#fff',}).setOrigin(0.5);
+        this.bottomText = this.add.text(400, 500, 'Use ARROW KEYS to balance your lawsuit!', {fontSize: '32px',fill: '#fff',}).setOrigin(0.5);
+
+
 
         this.input.keyboard.on('keydown-RIGHT', this.incrementCounter, this);
         this.input.keyboard.on('keydown-LEFT', this.decrementCounter, this);
@@ -486,9 +512,24 @@ class MiniGameBalanceLaw extends Phaser.Scene {
         // factor *= this.counter;
         degrees = this.counter / divider;
         console.log(degrees);
+
+        
+        this.laoban_balance.anims.play('balance')
+
+        if (degrees > 15 || degrees < -15) {
+            this.laoban_balance.anims.play('tipping')
+        } 
+
+        if (degrees > 30 || degrees < -30) {
+            this.laoban_balance.anims.play('falling')
+        } 
+
+
         if (degrees > 50 || degrees < -50) {
             this.endMiniGame();
         }
+
+        this.laoban_balance.rotation = degrees * (Math.PI / 180);
     }
 
     endMiniGame() {
