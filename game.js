@@ -29,7 +29,11 @@ class MainScene extends Phaser.Scene {
         this.load.image('copyright_claim1', 'assets/copyright_claim1.png');
         this.load.image('copyright_claim2', 'assets/copyright_claim2.png');
 
-        
+        this.load.image('video1', 'assets/video1.png');
+        this.load.image('video2', 'assets/video2.png');
+        this.load.image('video3', 'assets/video3.png');
+
+
         this.load.image('laoban_stand1', 'assets/laoban_stand1.png');
         this.load.image('laoban_stand2', 'assets/laoban_stand2.png');
         this.load.image('laoban_walk1', 'assets/laoban_walk1.png');
@@ -395,6 +399,18 @@ class MiniGameB extends Phaser.Scene {
         this.laoban_sue.setCollideWorldBounds(true);
         this.laoban_sue.scale = 2;
         //this.player.scaleX = -1;
+        
+        this.video1 = this.physics.add.sprite((Math.ceil(Math.random() * 800)+800),Math.ceil(Math.random() * 600), 'video1');
+        this.video1.scale = 2;
+        this.video1.setVelocityX(-200)
+
+        this.video2 = this.physics.add.sprite((Math.ceil(Math.random() * 800)+800),Math.ceil(Math.random() * 600), 'video2');
+        this.video2.scale = 2;
+        this.video2.setVelocityX(-200)
+
+        this.video3 = this.physics.add.sprite((Math.ceil(Math.random() * 800)+800),Math.ceil(Math.random() * 600), 'video3');
+        this.video3.scale = 2;
+        this.video3.setVelocityX(-200)
 
 
         this.anims.create({
@@ -437,6 +453,11 @@ class MiniGameB extends Phaser.Scene {
     }
 
     update() {
+
+
+        this.collidingWithVideo1 = false
+
+
         // Move the player up and down
         if (this.cursors.up.isDown) {
             this.laoban_sue.setVelocityY(-200);
@@ -450,8 +471,14 @@ class MiniGameB extends Phaser.Scene {
         this.lawsuits.children.iterate(lawsuit => {
             if (lawsuit) {
                 lawsuit.setVelocityX(400); // Set lawsuit speed
+                this.collidingWithVideo1 = Phaser.Geom.Intersects.RectangleToRectangle(lawsuit, this.video1);
+                console.log(Phaser.Geom.Intersects.RectangleToRectangle(lawsuit, this.video1))
             }
         });
+
+        if(this.collidingWithVideo1){
+            //console.log("got em!")
+        }
     }
 
     sue() {
@@ -648,4 +675,3 @@ isMinigamePlayable = true;
 justPlayedMinigame = false;
 isPlayingMinigame = false;
 const game = new Phaser.Game(config);
-this.lostthis.lost
