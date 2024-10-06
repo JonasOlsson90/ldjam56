@@ -404,7 +404,7 @@ class MiniGameB extends Phaser.Scene {
             lawsuit.body.velocity.x = 400; // Lawsuit speed to the right
 
             // Optionally, you can set a timeout to deactivate the lawsuit after a certain time
-            this.time.delayedCall(1000, () => {
+            this.time.delayedCall(2000, () => {
                 lawsuit.setActive(false);
                 lawsuit.setVisible(false);
             });
