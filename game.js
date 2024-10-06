@@ -43,34 +43,33 @@ class MainScene extends Phaser.Scene {
             repeat: -1
         })
 
-    this.anims.create({
-		key: 'desk',
-		frames: [{key: 'desk1'}, {key: 'desk2'}],
-		frameRate: framerate,
-		repeat: -1
-	})
+        this.anims.create({
+            key: 'desk',
+            frames: [{key: 'desk1'}, {key: 'desk2'}],
+            frameRate: framerate,
+            repeat: -1
+        })
 
         const image1 = this.add.image(0, 0, "office");
         image1.setOrigin(0,0);
 
         // Create player
         this.player = this.physics.add.sprite(400, 300, 'laoban_stand1').setCollideWorldBounds(true);
-	    this.player.anims.play('laoban_stand');
+	    this.physics.add.existing(this.player);
+        this.player.anims.play('laoban_stand');
 	    this.player.anims.play('laoban_stand');
         
-        // Create boxes
-        this.boxes = this.physics.add.staticGroup();
-        const leftBox = this.boxes.create(200, 300, 'desk1');
-        // this.leftBox.anims.play('desk');
+        // Create desks
 
-        const rightBox = this.boxes.create(600, 300, 'desk1');
+        this.leftDesk = this.physics.add.sprite(200,300, 'desk1');
+        this.physics.add.existing(this.leftDesk);
+        this.leftDesk.anims.play('desk')
 
-        const bottomBox = this.boxes.create(400, 500, 'desk1');
+        this.rightDesk = this.physics.add.sprite(600,300, 'desk1');
+        this.rightDesk.anims.play('desk')
 
-        // Set up overlap detection
-        this.physics.add.overlap(this.player, leftBox, () => this.triggerMiniGame('MiniGameA'), null, this);
-        this.physics.add.overlap(this.player, rightBox, () => this.triggerMiniGame('MiniGameB'), null, this);
-        this.physics.add.overlap(this.player, bottomBox, () => this.triggerMiniGame('MiniGameBalanceLaw'), null, this);
+        this.bottomDesk = this.physics.add.sprite(400,500, 'desk1');
+        this.bottomDesk.anims.play('desk')
 
         // Input setup
         this.cursors = this.input.keyboard.createCursorKeys();
@@ -122,9 +121,6 @@ class MainScene extends Phaser.Scene {
     }
 
     handleMovement() {    
-        // console.log("din mamma uppdateras!")    
-        // console.log("player vel x: " + this.player.VelocityX);
-        // console.log("player vel y: " + this.player);
         const isMoving = this.cursors.left.isDown || this.cursors.right.isDown || this.cursors.up.isDown || this.cursors.down.isDown;
 
 
@@ -168,21 +164,22 @@ class MainScene extends Phaser.Scene {
     }
 
     checkPlayerCollision() {
-        const playerBounds = this.player.getBounds();
-        const leftBoxBounds = this.boxes.getChildren()[0].getBounds();
-        const rightBoxBounds = this.boxes.getChildren()[1].getBounds();
-        const bottomBoxBounds = this.boxes.getChildren()[2].getBounds();
-    
-        const collidingWithLeftBox = Phaser.Geom.Intersects.RectangleToRectangle(playerBounds, leftBoxBounds);
-        const collidingWithRightBox = Phaser.Geom.Intersects.RectangleToRectangle(playerBounds, rightBoxBounds);
-        const collidingWithBottomBox = Phaser.Geom.Intersects.RectangleToRectangle(playerBounds, bottomBoxBounds);
 
-        const isAnythingCollidingWithAnything = collidingWithLeftBox || collidingWithRightBox || collidingWithBottomBox;
+        const collidingWithLeftDesk = Phaser.Geom.Intersects.RectangleToRectangle(this.player.getBounds(), this.leftDesk.getBounds());
+        const collidingWithRightDesk = Phaser.Geom.Intersects.RectangleToRectangle(this.player.getBounds(), this.rightDesk.getBounds());
+        const collidingWithBottomDesk = Phaser.Geom.Intersects.RectangleToRectangle(this.player.getBounds(), this.bottomDesk.getBounds());
+        const isAnythingCollidingWithAnything = collidingWithLeftDesk || collidingWithRightDesk || collidingWithBottomDesk;
     
-        if (!isAnythingCollidingWithAnything) {
+        if (collidingWithLeftDesk){
+            this.triggerMiniGame('MiniGameA')
+        } else if (collidingWithRightDesk) {
+            this.triggerMiniGame('MiniGameB')
+        } else if (collidingWithBottomDesk) {
+            this.triggerMiniGame('MiniGameBalanceLaw')
+        } else if (!isAnythingCollidingWithAnything) {
             isMinigamePlayable = true;
             if(justPlayedMinigame) {
-                justPlayedMinigame = false 
+                justPlayedMinigame = false
             }
         }
     }
