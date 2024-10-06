@@ -25,6 +25,10 @@ class MainScene extends Phaser.Scene {
         this.load.image('minigame_splash', 'assets/minigame_splash.png');
         this.load.image('splash', 'assets/splash.png');
         this.load.image('lawsuit', 'assets/button.png');
+
+        this.load.image('copyright_claim1', 'assets/copyright_claim1.png');
+        this.load.image('copyright_claim2', 'assets/copyright_claim2.png');
+
         
         this.load.image('laoban_stand1', 'assets/laoban_stand1.png');
         this.load.image('laoban_stand2', 'assets/laoban_stand2.png');
@@ -389,6 +393,7 @@ class MiniGameB extends Phaser.Scene {
         // Set up the player
         this.laoban_sue = this.physics.add.sprite(100, 300, 'laoban_sue1'); // Replace 'dev1' with your player sprite
         this.laoban_sue.setCollideWorldBounds(true);
+        this.laoban_sue.scale = 2;
         //this.player.scaleX = -1;
 
 
@@ -406,11 +411,18 @@ class MiniGameB extends Phaser.Scene {
             repeat: 0
         })
 
+        this.anims.create({
+            key: 'copyright_claim',
+            frames: [{key: 'copyright_claim1'}, {key: 'copyright_claim2'}],
+            frameRate: framerate,
+            repeat: -1
+        })
+
 
 
         // Create a group for lawsuits
         this.lawsuits = this.physics.add.group({
-            defaultKey: 'lawsuit', // You need to load this lawsuit sprite in preload
+            defaultKey: 'copyright_claim1', // You need to load this lawsuit sprite in preload
             maxSize: 10 // Limit the number of lawsuits on screen
         });
         
@@ -453,6 +465,8 @@ class MiniGameB extends Phaser.Scene {
             lawsuit.setPosition(this.laoban_sue.x + 20, this.laoban_sue.y);
             lawsuit.setActive(true);
             lawsuit.setVisible(true);
+            lawsuit.setScale(2);
+            lawsuit.anims.play('copyright_claim')
             lawsuit.body.velocity.x = 400; // Lawsuit speed to the right
 
             // Optionally, you can set a timeout to deactivate the lawsuit after a certain time
