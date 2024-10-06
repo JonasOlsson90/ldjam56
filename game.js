@@ -12,7 +12,6 @@ class MainScene extends Phaser.Scene {
         this.timeRemaining = 30; // Countdown from 30 seconds
         this.timerText = null; // To hold the text object
         this.timerEvent = null; // To hold the timer event
-        // this.boxCounts = [0, 0, 0]; // Initialize counts for each box
         this.boxTextObjects = []; // To hold text objects above boxes
     }
 
@@ -22,6 +21,7 @@ class MainScene extends Phaser.Scene {
         this.load.image('office', 'assets/office.png');
         this.load.image('minigame_splash', 'assets/minigame_splash.png');
         this.load.image('splash', 'assets/splash.png');
+        this.load.image('lawsuit', 'assets/button.png');
         
         this.load.image('laoban_stand1', 'assets/laoban_stand1.png');
         this.load.image('laoban_stand2', 'assets/laoban_stand2.png');
@@ -354,35 +354,74 @@ class MiniGameB extends Phaser.Scene {
     name = "MiniGameB";
     constructor() {
         super({ key: 'MiniGameB' });
+        this.player = null;
+        this.lawsuits = null; // Group to hold lawsuits
     }
 
     create() {
-        this.counter = 0;
-        this.timerText = this.add.text(400, 300, 'MiniGame B: Press B', {
-            fontSize: '32px',
-            fill: '#fff',
-        }).setOrigin(0.5);
+        const image1 = this.add.image(0, 0, "minigame_splash");
+        image1.setOrigin(0,0);
 
-        this.input.keyboard.on('keydown-B', this.incrementCounter, this);
-        this.input.keyboard.on('keyup-B', this.onKeyUp, this);
-        this.time.delayedCall(3000, this.endMiniGame, [], this);
-	    isPlayingMinigame=true;
+        // Set up the player
+        this.player = this.physics.add.sprite(100, 300, 'laoban_stand1'); // Replace 'dev1' with your player sprite
+        this.player.setCollideWorldBounds(true);
+        this.player.scaleX = -1;
+
+        // Create a group for lawsuits
+        this.lawsuits = this.physics.add.group({
+            defaultKey: 'lawsuit', // You need to load this lawsuit sprite in preload
+            maxSize: 10 // Limit the number of lawsuits on screen
+        });
+        
+        // Add keyboard input listeners
+        this.cursors = this.input.keyboard.createCursorKeys();
+        this.input.keyboard.on('keydown-SPACE', this.sue, this);
+        
+        // Set a timer to end the mini-game
+        this.time.delayedCall(10000, this.endMiniGame, [], this); // 3 seconds for the mini-game duration
+
+        isPlayingMinigame = true;
     }
 
-    onKeyUp() {
-        this.isPressed = false;
+    update() {
+        // Move the player up and down
+        if (this.cursors.up.isDown) {
+            this.player.setVelocityY(-200);
+        } else if (this.cursors.down.isDown) {
+            this.player.setVelocityY(200);
+        } else {
+            this.player.setVelocityY(0);
+        }
+
+        // Update lawsuits
+        this.lawsuits.children.iterate(lawsuit => {
+            if (lawsuit) {
+                lawsuit.setVelocityX(400); // Set lawsuit speed
+            }
+        });
     }
 
-    incrementCounter() {
-        if (!this.isPressed) {
-            this.counter++;
-            this.isPressed = true;
+    sue() {
+        // Get the first available lawsuit from the group
+        const lawsuit = this.lawsuits.get();
+
+        if (lawsuit) {
+            // Set lawsuit position to the player's position and reset its velocity
+            lawsuit.setPosition(this.player.x + 20, this.player.y);
+            lawsuit.setActive(true);
+            lawsuit.setVisible(true);
+            lawsuit.body.velocity.x = 400; // Lawsuit speed to the right
+
+            // Optionally, you can set a timeout to deactivate the lawsuit after a certain time
+            this.time.delayedCall(1000, () => {
+                lawsuit.setActive(false);
+                lawsuit.setVisible(false);
+            });
         }
     }
 
     endMiniGame() {
-        this.input.keyboard.off('keydown-B', this.incrementCounter, this);
-        this.input.keyboard.off('keyup-B', this.onKeyUp, this);
+        this.input.keyboard.off('keydown-SPACE', this.shoot, this);
         this.scene.stop();
         this.scene.resume('MainScene');
 
@@ -390,8 +429,7 @@ class MiniGameB extends Phaser.Scene {
         const mainScene = this.scene.get('MainScene');
         mainScene.timerEvent.paused = false;
 
-        const scoreMessage = `MiniGame B ended! You pressed 'B' ${this.counter} times.`;
-        console.log(scoreMessage);
+        console.log("MiniGame B ended!");
         justPlayedMinigame = true;
         isPlayingMinigame = false;
         isMinigameActive = false;
