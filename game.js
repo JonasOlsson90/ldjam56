@@ -4,6 +4,7 @@ let framerate = 6;
 let isWalking = false;
 let isMinigameActive = false;
 let minigameCounts = {MiniGameA: 0, MiniGameB: 0, MiniGameBalanceLaw: 0};
+let minigameStrikes = {MiniGameA: 0, MiniGameB: 0, MiniGameBalanceLaw: 0};
 let boxNames = ["MiniGameA", "MiniGameB", "MiniGameBalanceLaw"];
     
 class MainScene extends Phaser.Scene {
@@ -171,6 +172,11 @@ class MainScene extends Phaser.Scene {
             splash.body.setAllowGravity(false);
             game.pause();
         }
+
+        if (Object.values(minigameStrikes).some(value => value > 2)) {
+            console.log("You lost!");
+            game.pause();
+        }
     }
 
     handleMovement() {    
@@ -239,7 +245,7 @@ class MainScene extends Phaser.Scene {
         } else if (!isAnythingCollidingWithAnything) {
             isMinigamePlayable = true;
             if(justPlayedMinigame) {
-                justPlayedMinigame = false
+                justPlayedMinigame = false;
             }
         }
     }
@@ -329,6 +335,9 @@ class MiniGameA extends Phaser.Scene {
 
         const scoreMessage = `MiniGame A ended! You pressed 'A' ${this.counter} times.`;
         console.log(scoreMessage);
+        if (this.counter < 10) {
+            minigameStrikes[this.name]++;
+        }
 	    justPlayedMinigame=true;
         isPlayingMinigame = false;
         isMinigameActive = false;
@@ -511,10 +520,9 @@ class MiniGameBalanceLaw extends Phaser.Scene {
         if (this.counter < 0) {
             this.counter -= factor;
         }
-        // factor *= this.counter;
+
         degrees = this.counter / divider;
         console.log(degrees);
-
         
         this.laoban_balance.anims.play('balance')
 
@@ -524,10 +532,10 @@ class MiniGameBalanceLaw extends Phaser.Scene {
 
         if (degrees > 30 || degrees < -30) {
             this.laoban_balance.anims.play('falling')
-        } 
-
+        }
 
         if (degrees > 50 || degrees < -50) {
+            minigameStrikes[this.name]++;
             this.endMiniGame();
         }
 
