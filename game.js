@@ -58,7 +58,7 @@ class MainScene extends Phaser.Scene {
         this.load.image('laoban_throw3', 'assets/laoban_throw3.png');
         this.load.image('laoban_party1', 'assets/laoban_party1.png');
         this.load.image('laoban_party2', 'assets/laoban_party2.png');
-        this.load.image('laoban_sad2', 'assets/laoban_sad2.png');
+        this.load.image('laoban_sad1', 'assets/laoban_sad1.png');
         this.load.image('laoban_sad2', 'assets/laoban_sad2.png');
 
         this.load.image('balance_top', 'assets/balance_top.png');
@@ -91,13 +91,6 @@ class MainScene extends Phaser.Scene {
         this.anims.create({
             key: 'desk',
             frames: [{key: 'desk1'}, {key: 'desk2'}],
-            frameRate: framerate,
-            repeat: -1
-        })
-
-        this.anims.create({
-            key: 'laoban_cry',
-            frames: [{key: 'laoban_sad1'}, {key: 'laoban_sad2'}],
             frameRate: framerate,
             repeat: -1
         })
@@ -205,9 +198,9 @@ class MainScene extends Phaser.Scene {
     }
 
     gameOver() {
-        // Stop the timer if needed
-        // Transition to another scene or handle game logic here
-        console.log("Time's up!"); // Placeholder for your game logic
+        console.log("GAME OVER!"); // Placeholder for your game logic
+        this.scene.pause();
+        this.scene.launch("GameOver");
     }
 
     update() {
@@ -224,16 +217,7 @@ class MainScene extends Phaser.Scene {
 
         if (Object.values(minigameStrikes).some(value => value > 2)) {
             console.log("You lost!");
-            //this.triggerMiniGame('GameOver');
-
-            const bg = this.add.image(0, 0, "sad");
-            bg.setOrigin(0,0);
-
-
-             this.laoban_sad = this.physics.add.sprite(400, 300, 'laoban_sad1');
-            // this.laoban_sad.anims.play('laoban_cry');
-            this.laoban_sad.scale = 2;
-
+            this.gameOver();
         }
     }
 
@@ -399,15 +383,21 @@ class GameOver extends Phaser.Scene {
 
     create() {
 
+        this.anims.create({
+            key: 'laoban_cry',
+            frames: [{key: 'laoban_sad1'}, {key: 'laoban_sad2'}],
+            frameRate: framerate,
+            repeat: -1
+        })
+
         const bg = this.add.image(0, 0, "sad");
         bg.setOrigin(0,0);
 
+        this.laoban_sad = this.physics.add.sprite(400, 300, 'laoban_sad1');
+        this.laoban_sad.anims.play('laoban_cry');
+        this.laoban_sad.scale = 2;
         
         
-        
-
-
-
         this.topText = this.add.text(400, 100, 'GAME OVER!', {fontSize: '32px',fill: '#ff0000',}).setOrigin(0.5);
         // TODO change bottomtext to reflect reason why you got gameover. i dunno figure it out!
         this.bottomText = this.add.text(400, 500, 'CHANGE THIS TEXT LATER!', {fontSize: '32px',fill: '#ff0000',}).setOrigin(0.5);
