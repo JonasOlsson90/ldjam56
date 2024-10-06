@@ -51,6 +51,8 @@ class MainScene extends Phaser.Scene {
         this.load.image('laoban_throw1', 'assets/laoban_throw1.png');
         this.load.image('laoban_throw2', 'assets/laoban_throw2.png');
         this.load.image('laoban_throw3', 'assets/laoban_throw3.png');
+        this.load.image('laoban_party1', 'assets/laoban_party1.png');
+        this.load.image('laoban_party2', 'assets/laoban_party2.png');
 
 
         this.load.image('balance_top', 'assets/balance_top.png');
@@ -500,10 +502,10 @@ class MiniGameB extends Phaser.Scene {
                     lawsuit.destroy();
                     this.video3.setPosition(Math.ceil(Math.random() * 800)+800,Math.ceil(Math.random() * 600))
                 }
+
+                
             }
         });
-
-       
 
         if(this.collidingWithVideo1){
             console.log("got em!")
