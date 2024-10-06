@@ -644,6 +644,7 @@ class MiniGameB extends Phaser.Scene {
             minigameCounts[this.name]--; // Reduce the counter by one
             mainScene.boxTextObjects[boxNames.indexOf(this.name)].setText(minigameCounts[this.name]); // Update the displayed text
         }
+        this.lost = false;
     }
 }
 
