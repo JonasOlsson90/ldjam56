@@ -26,21 +26,19 @@ class MainScene extends Phaser.Scene {
     }
 
     create() {
+        this.anims.create({
+            key: 'laoban_stand',
+            frames: [{key: 'laoban_stand1'}, {key: 'laoban_stand2'}],
+            frameRate: framerate,
+            repeat: -1
+        });
 
-
-	this.anims.create({
-		key: 'laoban_stand',
-		frames: [{key: 'laoban_stand1'}, {key: 'laoban_stand2'}],
-		frameRate: framerate,
-		repeat: -1
-	});
-
-	this.anims.create({
-		key: 'laoban_walk',
-		frames: [{key: 'laoban_walk1'}, {key: 'laoban_walk2'}],
-		frameRate: framerate,
-		repeat: -1
-	})
+        this.anims.create({
+            key: 'laoban_walk',
+            frames: [{key: 'laoban_walk1'}, {key: 'laoban_walk2'}],
+            frameRate: framerate,
+            repeat: -1
+        })
 
     this.anims.create({
 		key: 'desk',
@@ -55,6 +53,7 @@ class MainScene extends Phaser.Scene {
         // Create player
         this.player = this.physics.add.sprite(400, 300, 'laoban_stand1').setCollideWorldBounds(true);
 	    this.player.anims.play('laoban_stand');
+	    this.player.anims.play('laoban_stand');
         
         // Create boxes
         this.boxes = this.physics.add.staticGroup();
@@ -68,27 +67,23 @@ class MainScene extends Phaser.Scene {
         // Set up overlap detection
         this.physics.add.overlap(this.player, leftBox, () => this.triggerMiniGame('MiniGameA'), null, this);
         this.physics.add.overlap(this.player, rightBox, () => this.triggerMiniGame('MiniGameB'), null, this);
-        this.physics.add.overlap(this.player, bottomBox, () => this.triggerMiniGame('MiniGameC'), null, this);
+        this.physics.add.overlap(this.player, bottomBox, () => this.triggerMiniGame('MiniGameBalanceLaw'), null, this);
 
         // Input setup
         this.cursors = this.input.keyboard.createCursorKeys();
     }
 
     update() {
-        //if (!this.scene.isPaused('MiniGameA') && !this.scene.isPaused('MiniGameB')) {
-            this.checkPlayerCollision();
-            this.handleMovement();
+        this.checkPlayerCollision();
+        this.handleMovement();
             
-        // booted = false;
         if (booted) {
             booted = false;
             splash = this.physics.add.sprite(0, 0, 'splash');
             splash.setOrigin(0, 0);
             splash.body.setAllowGravity(false);
             game.pause();
-
         }
-        //}
     }
 
     handleMovement() {    
@@ -98,20 +93,20 @@ class MainScene extends Phaser.Scene {
         const isMoving = this.cursors.left.isDown || this.cursors.right.isDown || this.cursors.up.isDown || this.cursors.down.isDown;
 
 
-	// flip that bitch!
-	if (this.cursors.right.isDown) {
-		this.player.scaleX = -1;
-	} else if (this.cursors.left.isDown) {
-		this.player.scaleX = 1;
-	}
+        // flip that bitch!
+        if (this.cursors.right.isDown) {
+            this.player.scaleX = -1;
+        } else if (this.cursors.left.isDown) {
+            this.player.scaleX = 1;
+        }
 
-	if(isMoving ){
-		// this shit needs to be done just once.
-		this.player.anims.play('laoban_walk');
- 	} else if (!isMoving) {
-		// this also needs to be done just once.
-		this.player.anims.play('laoban_stand');
-	}
+        if(isMoving ){
+            // this shit needs to be done just once.
+            this.player.anims.play('laoban_walk');
+        } else if (!isMoving) {
+            // this also needs to be done just once.
+            this.player.anims.play('laoban_stand');
+        }
 
         //console.log(isMoving)
         if(isPlayingMinigame || !isMoving){
@@ -158,7 +153,6 @@ class MainScene extends Phaser.Scene {
     }
 
     triggerMiniGame(miniGame) {
-        
         // console.log("isMinigamePlayable: " + isMinigamePlayable);
         if (isMinigamePlayable === true){
             isMinigamePlayable = false;
@@ -172,14 +166,14 @@ class MainScene extends Phaser.Scene {
     }
 }
 
-let isPressed = false;
-
 class MiniGameA extends Phaser.Scene {
+    isPressed = false;
     constructor() {
         super({ key: 'MiniGameA' });
     }
 
     create() {
+        console.log("create");
         this.counter = 0;
         this.timerText = this.add.text(400, 300, 'MiniGame A: Press A', {
             fontSize: '32px',
@@ -193,18 +187,22 @@ class MiniGameA extends Phaser.Scene {
     }
 
     onKeyUp() {
-        isPressed = false;
+        console.log("onKeyUp");
+        this.isPressed = false;
     }
 
     incrementCounter() {
-        if (!isPressed) {
+        console.log("incrementCounter");
+        if (!this.isPressed) {
             this.counter++;
-            isPressed = true;
+            this.isPressed = true;
         }
     }
 
     endMiniGame() {
+        console.log("endMiniGame");
         this.input.keyboard.off('keydown-A', this.incrementCounter, this);
+        this.input.keyboard.off('keyup-A', this.onKeyUp, this);
         this.scene.stop();
         this.scene.resume('MainScene');
 
@@ -216,11 +214,13 @@ class MiniGameA extends Phaser.Scene {
 }
 
 class MiniGameB extends Phaser.Scene {
+    isPressed = false;
     constructor() {
         super({ key: 'MiniGameB' });
     }
 
     create() {
+        console.log("create");
         this.counter = 0;
         this.timerText = this.add.text(400, 300, 'MiniGame B: Press B', {
             fontSize: '32px',
@@ -228,16 +228,28 @@ class MiniGameB extends Phaser.Scene {
         }).setOrigin(0.5);
 
         this.input.keyboard.on('keydown-B', this.incrementCounter, this);
+        this.input.keyboard.on('keyup-B', this.onKeyUp, this);
         this.time.delayedCall(3000, this.endMiniGame, [], this);
 	    isPlayingMinigame=true;
     }
 
+    onKeyUp() {
+        console.log("onKeyUp");
+        this.isPressed = false;
+    }
+
     incrementCounter() {
-        this.counter++;
+        console.log("incrementCounter");
+        if (!this.isPressed) {
+            this.counter++;
+            this.isPressed = true;
+        }
     }
 
     endMiniGame() {
+        console.log("endMiniGame");
         this.input.keyboard.off('keydown-B', this.incrementCounter, this);
+        this.input.keyboard.off('keyup-B', this.onKeyUp, this);
         this.scene.stop();
         this.scene.resume('MainScene');
 
@@ -253,11 +265,11 @@ let divider = 4;
 let degrees = 0;
 class MiniGameBalanceLaw extends Phaser.Scene {
     constructor() {
-        super({ key: 'MiniGameC' });
+        super({ key: 'MiniGameBalanceLaw' });
     }
 
     create() {
-        if (Math.floor(Math.random()) % 2 === 0){
+        if (Math.floor(Math.random() * 10) % 2 === 0){
             this.counter = 1;
         } else {
             this.counter = -1;
@@ -301,7 +313,7 @@ class MiniGameBalanceLaw extends Phaser.Scene {
         this.scene.stop();
         this.scene.resume('MainScene');
 
-        const scoreMessage = `End balance is ${this.counter}`;
+        const scoreMessage = `End balance is ${degrees}`;
         console.log(scoreMessage);
         justPlayedMinigame = true;
         isPlayingMinigame = false;
