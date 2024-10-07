@@ -224,7 +224,7 @@ class MainScene extends Phaser.Scene {
         this.timerText.setText(`Time: ${this.timeRemaining}`);
         
         if (this.timeRemaining <= 0) {
-            if (Object.values(minigameCounts).reduce((acc, value) => acc + value, 0) >= 10000) {
+            if (Object.values(minigameCounts).reduce((acc, value) => acc + value, 0) >= 10) {
                 gameOverText1 = "Not enough micro management!";
                 gameOverText2 = `TinyCréatures ${releaseCounter} sucks!`;
                 this.gameOver();
