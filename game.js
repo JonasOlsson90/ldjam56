@@ -144,7 +144,6 @@ class MainScene extends Phaser.Scene {
 
     startReleaseCountdown() {
         if (releaseCounter > 11) {
-            console.log(`TinyCreatures ${releaseCounter} was released!`);
             this.timeRemaining = 30;
             this.timerText.setText(`Time: ${this.timeRemaining}`);
             delay = Math.max(delay * 0.8, 500);
@@ -212,7 +211,6 @@ class MainScene extends Phaser.Scene {
     }
 
     gameOver() {
-        console.log("GAME OVER!"); // Placeholder for your game logic
         this.scene.pause();
         this.scene.launch("GameOver");
     }
@@ -220,7 +218,7 @@ class MainScene extends Phaser.Scene {
     update() {
         this.checkPlayerCollision();
         this.handleMovement();
-            
+        
         if (booted) {
             booted = false;
             splash = this.physics.add.sprite(0, 0, 'splash');
@@ -266,7 +264,6 @@ class MainScene extends Phaser.Scene {
             
         }
 
-        //console.log(isMoving)
         if(isPlayingMinigame || !isMoving){
             this.player.setVelocity(0);
         }
@@ -312,7 +309,6 @@ class MainScene extends Phaser.Scene {
     }
 
     triggerMiniGame(miniGame) {
-        // console.log("isMinigamePlayable: " + isMinigamePlayable);
         if (minigameCounts[miniGame] <= 0) return;
         if (isMinigamePlayable === true){
             isMinigamePlayable = false;
@@ -481,7 +477,6 @@ class MiniGameA extends Phaser.Scene {
         mainScene.timerEvent.paused = false;
 
         const scoreMessage = `MiniGame A ended! You pressed 'A' ${this.counter} times.`;
-        console.log(scoreMessage);
         if (this.counter < 10) {
             minigameStrikes[this.name]++;
         }
@@ -632,20 +627,10 @@ class MiniGameB extends Phaser.Scene {
             }
         });
 
-
-
         if (this.video1.x <= 0 || this.video2.x <= 0 || this.video3.x <= 0) {
             this.lost = true;
             minigameStrikes[this.name]++;
             this.endMiniGame();
-        }
-
-        if(this.collidingWithVideo1){
-            console.log("got em!")
-        }
-
-        if(this.collidingWithVideo1){
-            console.log("got em!")
         }
     }
 
@@ -683,7 +668,6 @@ class MiniGameB extends Phaser.Scene {
         const mainScene = this.scene.get('MainScene');
         mainScene.timerEvent.paused = false;
 
-        console.log("MiniGame B ended!");
         justPlayedMinigame = true;
         isPlayingMinigame = false;
         isMinigameActive = false;
@@ -777,7 +761,6 @@ class MiniGameBalanceLaw extends Phaser.Scene {
         }
 
         degrees = this.counter / divider;
-        console.log(degrees);
         
         this.laoban_balance.anims.play('balance')
 
@@ -808,7 +791,6 @@ class MiniGameBalanceLaw extends Phaser.Scene {
         mainScene.timerEvent.paused = false;
 
         const scoreMessage = `End balance is ${degrees}`;
-        console.log(scoreMessage);
         justPlayedMinigame = true;
         isPlayingMinigame = false;
         isMinigameActive = false;
