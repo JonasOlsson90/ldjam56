@@ -7,8 +7,9 @@ let minigameCounts = {MiniGameA: 1, MiniGameB: 1, MiniGameBalanceLaw: 1};
 let minigameStrikes = {MiniGameA: 0, MiniGameB: 0, MiniGameBalanceLaw: 0};
 let boxNames = ["MiniGameA", "MiniGameB", "MiniGameBalanceLaw"];
 let delay = 3000;
-let releaseCounter = 0;
-let gameOverText = "";
+let releaseCounter = 11;
+let gameOverText1 = "";
+let gameOverText2 = "";
     
 class MainScene extends Phaser.Scene {
     constructor() {
@@ -142,11 +143,11 @@ class MainScene extends Phaser.Scene {
     }
 
     startReleaseCountdown() {
-        if (releaseCounter > 0) {
+        if (releaseCounter > 11) {
             console.log(`TinyCreatures ${releaseCounter} was released!`);
             this.timeRemaining = 30;
             this.timerText.setText(`Time: ${this.timeRemaining}`);
-            delay -= 250;
+            delay = Math.max(delay * 0.8, 500);
             this.restartRandomIncrement();
         }
 
@@ -200,7 +201,8 @@ class MainScene extends Phaser.Scene {
         
         if (this.timeRemaining <= 0) {
             if (Object.values(minigameCounts).reduce((acc, value) => acc + value, 0) >= 10) {
-                gameOverText = "Too little micro management! This game sucks!"
+                gameOverText1 = "Not enough micro management!";
+                gameOverText2 = `TinyCréatures ${releaseCounter} sucks!`;
                 this.gameOver();
                 return;
             }
@@ -229,9 +231,9 @@ class MainScene extends Phaser.Scene {
 
         if (Object.values(minigameStrikes).some(value => value > 2)) {
             // Feel free to change texts to something funnier
-            gameOverText = minigameStrikes["MiniGameA"] >= 3 ?
-            "You didn't motivate your workers enough" :
-            gameOverText = minigameStrikes["MiniGameB"] >= 3 ?
+            gameOverText1 = minigameStrikes["MiniGameA"] >= 3 ?
+            "You didn't motivate your workers enough" : 
+            minigameStrikes["MiniGameB"] >= 3 ?
             "Too many violations of your copyrights were made" :
             "Too many lawsuites were lost";
             this.gameOver();
@@ -353,10 +355,8 @@ class Party extends Phaser.Scene {
         this.laoban_party.anims.play('laoban_party');
         this.laoban_party.scale = 2;
 
-
-
         this.topText = this.add.text(400, 100, `TinyCréatures ${releaseCounter - 1} released!`, {fontSize: '32px',fill: '#ff0000',}).setOrigin(0.5);
-        this.bottomText = this.add.text(400, 500, 'TIME TO PARTY!', {fontSize: '32px',fill: '#ff0000',}).setOrigin(0.5);
+        this.bottomText = this.add.text(400, 500, `Time to start working on TinyCréatures ${releaseCounter}!`, {fontSize: '32px',fill: '#ff0000',}).setOrigin(0.5);
         this.time.delayedCall(3000, this.endParty, [], this);
         isPlayingMinigame=true;
     }
@@ -412,7 +412,8 @@ class GameOver extends Phaser.Scene {
         
         this.topText = this.add.text(400, 100, 'GAME OVER!', {fontSize: '32px',fill: '#ff0000',}).setOrigin(0.5);
         // TODO change bottomtext to reflect reason why you got gameover. i dunno figure it out!
-        this.bottomText = this.add.text(400, 500, gameOverText, {fontSize: '32px',fill: '#ff0000',}).setOrigin(0.5);
+        this.bottomText = this.add.text(400, 500, gameOverText1, {fontSize: '32px',fill: '#ff0000',}).setOrigin(0.5);
+        this.bottomText = this.add.text(400, 535, gameOverText2, {fontSize: '32px',fill: '#ff0000',}).setOrigin(0.5);
     }
 }
 
