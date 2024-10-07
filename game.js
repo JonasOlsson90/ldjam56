@@ -161,8 +161,6 @@ class MainScene extends Phaser.Scene {
 
         // Playback speed increases with every release!
         musicSpeedModifier = ((releaseCounter-11) * 0.1) + 1;
-        console.log("releaseCounter: " + releaseCounter)
-        console.log("music speed: " + musicSpeedModifier)
         this.music.setRate(musicSpeedModifier);
         
         // Play the sound
@@ -397,9 +395,7 @@ class Party extends Phaser.Scene {
 
 
     endParty() {
-        console.log("release +1")
         releaseCounter++;
-
         restartMain = true;
         this.scene.stop();
         this.scene.resume('MainScene');
