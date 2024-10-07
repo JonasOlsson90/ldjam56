@@ -11,6 +11,7 @@ let releaseCounter = 11;
 let gameOverText1 = "";
 let gameOverText2 = "";
 let restartMain = false;
+let musicSpeedModifier = 1;
     
 class MainScene extends Phaser.Scene {
     constructor() {
@@ -22,6 +23,8 @@ class MainScene extends Phaser.Scene {
     }
 
     preload() {
+        this.load.audio('music', 'assets/HeatleyBros - HeatleyBros III - 04 8 Bit Town.mp3');
+
         this.load.image('player', 'assets/box.png'); // Replace with actual path
 
         this.load.image('office', 'assets/office.png');
@@ -77,6 +80,13 @@ class MainScene extends Phaser.Scene {
     }
 
     create() {
+
+
+        this.music = this.sound.add('music');
+    
+        
+
+
         this.anims.create({
             key: 'laoban_stand',
             frames: [{key: 'laoban_stand1'}, {key: 'laoban_stand2'}],
@@ -141,6 +151,23 @@ class MainScene extends Phaser.Scene {
 
         // Start the random incrementing
         this.startRandomIncrement();
+
+        this.startMusic();
+    }
+
+    startMusic() {
+        // Stop any music curerntly playing.
+        this.sound.stopAll();
+
+        // Playback speed increases with every release!
+        musicSpeedModifier = ((releaseCounter-11) * 0.1) + 1;
+        console.log("releaseCounter: " + releaseCounter)
+        console.log("music speed: " + musicSpeedModifier)
+        this.music.setRate(musicSpeedModifier);
+        
+        // Play the sound
+        this.music.play();
+
     }
 
     startReleaseCountdown() {
@@ -159,7 +186,6 @@ class MainScene extends Phaser.Scene {
         loop: true
         });
 
-        releaseCounter++;
     }
 
     createCounterText(x, y, minigame) {
@@ -200,7 +226,7 @@ class MainScene extends Phaser.Scene {
         this.timerText.setText(`Time: ${this.timeRemaining}`);
         
         if (this.timeRemaining <= 0) {
-            if (Object.values(minigameCounts).reduce((acc, value) => acc + value, 0) >= 10) {
+            if (Object.values(minigameCounts).reduce((acc, value) => acc + value, 0) >= 10000) {
                 gameOverText1 = "Not enough micro management!";
                 gameOverText2 = `TinyCréatures ${releaseCounter} sucks!`;
                 this.gameOver();
@@ -371,6 +397,9 @@ class Party extends Phaser.Scene {
 
 
     endParty() {
+        console.log("release +1")
+        releaseCounter++;
+
         restartMain = true;
         this.scene.stop();
         this.scene.resume('MainScene');
