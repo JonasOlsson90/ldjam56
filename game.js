@@ -190,17 +190,9 @@ class MainScene extends Phaser.Scene {
     }
 
     createCounterText(x, y, minigame) {
-        const count = minigameCounts[minigame];
-        let displayText = '';
-    
-        // Build the display text based on the count
-        if (count > 0) {
-            displayText = '!'.repeat(count); // Repeat exclamation marks based on count
-        }
-    
-        const text = this.add.text(x, y, displayText, {
+        const text = this.add.text(x, y, minigameCounts[minigame], {
             fontSize: '24px',
-            fill: '#ff0000', // Set color to red
+            fill: '#fff',
         }).setOrigin(0.5);
         
         this.boxTextObjects[boxNames.indexOf(minigame)] = text; // Store the text object in the array
@@ -227,15 +219,7 @@ class MainScene extends Phaser.Scene {
         minigameCounts[boxNames[randomIndex]]++;
         
         // Update the corresponding text object
-        const count = minigameCounts[boxNames[randomIndex]];
-        let displayText = '';
-    
-        // Build the display text based on the count
-        if (count > 0) {
-            displayText = '!'.repeat(count); // Repeat exclamation marks based on count
-        }
-        
-        this.boxTextObjects[randomIndex].setText(displayText); // Store the text object in the array
+        this.boxTextObjects[randomIndex].setText(minigameCounts[boxNames[randomIndex]]);
     }
 
     updateTimer() {
@@ -427,6 +411,12 @@ class Party extends Phaser.Scene {
 	    justPlayedMinigame=true;
         isPlayingMinigame = false;
         isMinigameActive = false;
+
+        // Reduce the corresponding box count
+        if (minigameCounts[this.name] > 0 && this.counter >= 10) {
+            minigameCounts[this.name]--; // Reduce the counter by one
+            mainScene.boxTextObjects[boxNames.indexOf(this.name)].setText(minigameCounts[this.name]); // Update the displayed text
+        }
     }
 
 
@@ -544,17 +534,7 @@ class MiniGameA extends Phaser.Scene {
         // Reduce the corresponding box count
         if (minigameCounts[this.name] > 0 && this.counter >= 10) {
             minigameCounts[this.name]--; // Reduce the counter by one
-
-            // Update the corresponding text object
-            const count = minigameCounts[boxNames[minigameCounts[this.name]]];
-            let displayText = '';
-        
-            // Build the display text based on the count
-            if (count > 0) {
-                displayText = '!'.repeat(count); // Repeat exclamation marks based on count
-            }
-            
-            mainScene.boxTextObjects[boxNames.indexOf(this.name)].setText(displayText); // Update the displayed text
+            mainScene.boxTextObjects[boxNames.indexOf(this.name)].setText(minigameCounts[this.name]); // Update the displayed text
         }
     }
 }
@@ -742,17 +722,7 @@ class MiniGameB extends Phaser.Scene {
         // Reduce the corresponding box count
         if (minigameCounts[this.name] > 0 && !this.lost) {
             minigameCounts[this.name]--; // Reduce the counter by one
-
-            // Update the corresponding text object
-            const count = minigameCounts[boxNames[minigameCounts[this.name]]];
-            let displayText = '';
-
-            // Build the display text based on the count
-            if (count > 0) {
-                displayText = '!'.repeat(count); // Repeat exclamation marks based on count
-            }
-            
-            mainScene.boxTextObjects[boxNames.indexOf(this.name)].setText(displayText); // Update the displayed text
+            mainScene.boxTextObjects[boxNames.indexOf(this.name)].setText(minigameCounts[this.name]); // Update the displayed text
         }
         this.lost = false;
     }
@@ -874,17 +844,7 @@ class MiniGameBalanceLaw extends Phaser.Scene {
         // Reduce the corresponding box count
         if (minigameCounts[this.name] > 0 && !this.lost) {
             minigameCounts[this.name]--; // Reduce the counter by one
-
-            // Update the corresponding text object
-            const count = minigameCounts[boxNames[minigameCounts[this.name]]];
-            let displayText = '';
-
-            // Build the display text based on the count
-            if (count > 0) {
-                displayText = '!'.repeat(count); // Repeat exclamation marks based on count
-            }
-            
-            mainScene.boxTextObjects[boxNames.indexOf(this.name)].setText(displayText); // Update the displayed text
+            mainScene.boxTextObjects[boxNames.indexOf(this.name)].setText(minigameCounts[this.name]); // Update the displayed text
         }
     }
 }
