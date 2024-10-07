@@ -3,7 +3,7 @@ let splash;
 let framerate = 6;
 let isWalking = false;
 let isMinigameActive = false;
-let minigameCounts = {MiniGameA: 1, MiniGameB: 1, MiniGameBalanceLaw: 1};
+let minigameCounts = {MiniGameA: 0, MiniGameB: 0, MiniGameBalanceLaw: 0};
 let minigameStrikes = {MiniGameA: 0, MiniGameB: 0, MiniGameBalanceLaw: 0};
 let boxNames = ["MiniGameA", "MiniGameB", "MiniGameBalanceLaw"];
 let delay = 3000;
@@ -410,6 +410,12 @@ class GameOver extends Phaser.Scene {
         // TODO change bottomtext to reflect reason why you got gameover. i dunno figure it out!
         this.bottomText = this.add.text(400, 500, gameOverText1, {fontSize: '32px',fill: '#ff0000',}).setOrigin(0.5);
         this.bottomText = this.add.text(400, 535, gameOverText2, {fontSize: '32px',fill: '#ff0000',}).setOrigin(0.5);
+
+        this.input.keyboard.on('keydown-ENTER', this.restartGame, this);
+    }
+
+    restartGame() {
+        window.location.reload();
     }
 }
 
@@ -476,7 +482,6 @@ class MiniGameA extends Phaser.Scene {
         const mainScene = this.scene.get('MainScene');
         mainScene.timerEvent.paused = false;
 
-        const scoreMessage = `MiniGame A ended! You pressed 'A' ${this.counter} times.`;
         if (this.counter < 10) {
             minigameStrikes[this.name]++;
         }
@@ -790,7 +795,6 @@ class MiniGameBalanceLaw extends Phaser.Scene {
         const mainScene = this.scene.get('MainScene');
         mainScene.timerEvent.paused = false;
 
-        const scoreMessage = `End balance is ${degrees}`;
         justPlayedMinigame = true;
         isPlayingMinigame = false;
         isMinigameActive = false;
