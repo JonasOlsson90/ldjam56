@@ -10,6 +10,7 @@ let delay = 3000;
 let releaseCounter = 11;
 let gameOverText1 = "";
 let gameOverText2 = "";
+let restartMain = false;
     
 class MainScene extends Phaser.Scene {
     constructor() {
@@ -205,7 +206,11 @@ class MainScene extends Phaser.Scene {
                 this.gameOver();
                 return;
             }
-            this.triggerMiniGame('Party');
+
+            // this.triggerMiniGame('Party');
+            this.scene.pause();
+            this.scene.launch("Party");
+
             this.startReleaseCountdown();
         }
     }
@@ -216,6 +221,13 @@ class MainScene extends Phaser.Scene {
     }
 
     update() {
+
+        if(restartMain) {
+            console.log("restarting scene")
+            restartMain = false;
+            this.scene.restart();
+        }
+
         this.checkPlayerCollision();
         this.handleMovement();
         
@@ -359,6 +371,7 @@ class Party extends Phaser.Scene {
 
 
     endParty() {
+        restartMain = true;
         this.scene.stop();
         this.scene.resume('MainScene');
 
