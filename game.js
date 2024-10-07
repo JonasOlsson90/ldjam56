@@ -355,7 +355,7 @@ class Party extends Phaser.Scene {
 
 
 
-        this.topText = this.add.text(400, 100, 'NEW RELEASE!', {fontSize: '32px',fill: '#ff0000',}).setOrigin(0.5);
+        this.topText = this.add.text(400, 100, `TinyCréatures ${releaseCounter - 1} released!`, {fontSize: '32px',fill: '#ff0000',}).setOrigin(0.5);
         this.bottomText = this.add.text(400, 500, 'TIME TO PARTY!', {fontSize: '32px',fill: '#ff0000',}).setOrigin(0.5);
         this.time.delayedCall(3000, this.endParty, [], this);
         isPlayingMinigame=true;
