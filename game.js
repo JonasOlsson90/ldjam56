@@ -245,7 +245,7 @@ class MainScene extends Phaser.Scene {
         if (this.timeRemaining <= 0) {
             if (Object.values(minigameCounts).reduce((acc, value) => acc + value, 0) >= 10) {
                 gameOverText1 = "Not enough micro management!";
-                gameOverText2 = `TinyCréatures ${releaseCounter} sucks!`;
+                gameOverText2 = `TinyCréatures ${releaseCounter} was not released!`;
                 this.gameOver();
                 return;
             }
@@ -408,7 +408,7 @@ class Party extends Phaser.Scene {
 
         this.topText = this.add.text(400, 100, `TinyCréatures ${releaseCounter - 1} released!`, {fontSize: '32px',fill: '#ff0000',}).setOrigin(0.5);
         this.bottomText = this.add.text(400, 500, `Time to start working on TinyCréatures ${releaseCounter}!`, {fontSize: '32px',fill: '#ff0000',}).setOrigin(0.5);
-        this.time.delayedCall(3000, this.endParty, [], this);
+        this.time.delayedCall(5000, this.endParty, [], this);
         isPlayingMinigame=true;
     }
 
