@@ -225,6 +225,10 @@ class MainScene extends Phaser.Scene {
             console.log("You lost!");
             this.gameOver();
         }
+
+        if (Object.values(minigameCounts).reduce((acc, value) => acc + value, 0) >= 10) {
+            this.gameOver();
+        }
     }
 
     handleMovement() {    
