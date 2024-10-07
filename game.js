@@ -12,6 +12,7 @@ let gameOverText1 = "";
 let gameOverText2 = "";
 let restartMain = false;
 let musicSpeedModifier = 1;
+let isFirst = true;
     
 class MainScene extends Phaser.Scene {
     constructor() {
@@ -150,7 +151,10 @@ class MainScene extends Phaser.Scene {
         this.startReleaseCountdown();
 
         // Start the random incrementing
-        this.startRandomIncrement();
+        if (isFirst) {
+            isFirst = false;
+            this.startRandomIncrement();
+        }
 
         this.startMusic();
     }
